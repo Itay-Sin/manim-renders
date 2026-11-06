@@ -118,7 +118,7 @@ def make_big_tool_card(name, desc, schema, width=6.4, height=3.0):
 
     def row(label, value, value_font, value_size, value_color):
         lab = Text(label, font_size=15, color=MUTED)
-        val = Text(value, font=value_font, font_size=value_size,
+        val = Text(value, font=value_font or "", font_size=value_size,
                    color=value_color)
         if val.width > width - 0.8:
             val.scale_to_fit_width(width - 0.8)
