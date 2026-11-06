@@ -8,19 +8,20 @@ Red appears only when things break (scenes 6-8).
 from manim import *
 
 # ---------------------------------------------------------------- palette ----
-BG = "#111318"
-INK = "#E8EAF0"          # primary text
-MUTED = "#8A91A0"        # secondary text
-LIGHT_GREY = "#C7CBD4"   # AI client outline
-PURPLE = "#A78BDA"       # the LLM, reasoning
-PURPLE_FILL = "#C9B6EE"  # context window fill
-TEAL = "#4FD1C5"         # plain code: MCP server, tools, compiler
-TEAL_DARK = "#2C8C82"    # compiler shade
-AMBER = "#E0AF68"        # knowledge: the semantic model
-GREY = "#9AA0A6"         # existing systems
-PACKET_WHITE = "#F5F6F8"
-ALERT_RED = "#F7768E"
-OK_GREEN = "#9ECE6A"
+# Light theme (operator decision 2026-11-07): white background, sleek, modern.
+BG = "#FBFBFD"
+INK = "#16181D"          # primary text
+MUTED = "#6B7280"        # secondary text
+LIGHT_GREY = "#7D8594"   # AI client outline, secondary marks (mid grey on white)
+PURPLE = "#6F4FC3"       # the LLM, reasoning
+PURPLE_FILL = "#C7B5F0"  # context window fill
+TEAL = "#0D9488"         # plain code: MCP server, tools, compiler
+TEAL_DARK = "#0A6B62"    # compiler shade
+AMBER = "#B45309"        # knowledge: the semantic model
+GREY = "#8A9099"         # existing systems
+PACKET_WHITE = "#16181D" # the travelling packet: near-black so it pops on white
+ALERT_RED = "#DC4C64"
+OK_GREEN = "#2F9E44"
 
 CODE_FONT = "Menlo"
 
@@ -95,7 +96,7 @@ def make_api_box():
 # ------------------------------------------------------------- tool cards ----
 def make_tool_card(name, desc, schema, width=2.7, height=0.95):
     card = RoundedRectangle(corner_radius=0.1, width=width, height=height)
-    card.set_stroke(TEAL, 1.8).set_fill("#152220", opacity=1.0)
+    card.set_stroke(TEAL, 1.8).set_fill("#EFF9F7", opacity=1.0)
     rows = VGroup(
         Text(name, font=CODE_FONT, font_size=15, color=INK),
         Text(desc, font_size=11, color=MUTED),
@@ -114,7 +115,7 @@ def make_tool_card(name, desc, schema, width=2.7, height=0.95):
 def make_big_tool_card(name, desc, schema, width=6.4, height=3.0):
     """Enlarged card with labelled rows, .rows exposes the three row groups."""
     card = RoundedRectangle(corner_radius=0.14, width=width, height=height)
-    card.set_stroke(TEAL, 2.5).set_fill("#152220", opacity=1.0)
+    card.set_stroke(TEAL, 2.5).set_fill("#EFF9F7", opacity=1.0)
 
     def row(label, value, value_font, value_size, value_color):
         lab = Text(label, font_size=15, color=MUTED)
