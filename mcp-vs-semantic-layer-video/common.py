@@ -31,17 +31,30 @@ config.background_color = BG
 
 
 # ----------------------------------------------------------------- actors ----
-def _shell(width, height, color, label, label_size=26):
+def make_shadow(box):
+    """Two stacked offset copies fake a soft drop shadow under a card."""
+    s1 = box.copy().set_stroke(width=0).set_fill("#101828", opacity=0.10)
+    s1.shift(0.045 * RIGHT + 0.065 * DOWN)
+    s2 = box.copy().set_stroke(width=0).set_fill("#101828", opacity=0.05)
+    s2.shift(0.09 * RIGHT + 0.13 * DOWN)
+    return VGroup(s2, s1)
+
+
+def _shell(width, height, color, label, label_size=26, title_color=None):
+    """White elevated card: soft shadow, hairline or accent stroke, bold title."""
     box = RoundedRectangle(corner_radius=0.18, width=width, height=height)
-    box.set_stroke(color, width=3)
-    tag = Text(label, font=UI_FONT, font_size=label_size, color=color)
-    tag.next_to(box.get_top(), DOWN, buff=0.16)
-    return box, tag
+    box.set_stroke(color, width=2.5).set_fill("#FFFFFF", opacity=1.0)
+    shadow = make_shadow(box)
+    tag = Text(label, font=UI_FONT, font_size=label_size,
+               color=title_color or color, weight=BOLD)
+    tag.next_to(box.get_top(), DOWN, buff=0.18)
+    return shadow, box, tag
 
 
 def make_ai_client():
     """AI client shell with .llm (purple box), .ctx_outline and .ctx_fill."""
-    shell, title = _shell(4.6, 5.0, LIGHT_GREY, "AI client")
+    shadow, shell, title = _shell(4.6, 5.0, "#D8DCE3", "AI client",
+                                  title_color=INK)
 
     llm = RoundedRectangle(corner_radius=0.14, width=2.9, height=2.1)
     llm.set_stroke(PURPLE, 3).set_fill(PURPLE, opacity=0.07)
@@ -58,7 +71,8 @@ def make_ai_client():
     ctx_label = Text("context window", font=UI_FONT, font_size=16, color=MUTED)
     ctx_label.next_to(ctx_outline, DOWN, buff=0.1)
 
-    g = VGroup(shell, title, llm, llm_label, ctx_outline, ctx_fill, ctx_label)
+    g = VGroup(shadow, shell, title, llm, llm_label,
+               ctx_outline, ctx_fill, ctx_label)
     g.shell, g.title = shell, title
     g.llm, g.llm_label = llm, llm_label
     g.ctx_outline, g.ctx_fill, g.ctx_label = ctx_outline, ctx_fill, ctx_label
@@ -75,22 +89,23 @@ def ctx_fill_target(client, frac):
 
 
 def make_mcp_server():
-    shell, title = _shell(3.3, 5.0, TEAL, "MCP server")
-    g = VGroup(shell, title)
+    shadow, shell, title = _shell(3.3, 5.0, TEAL, "MCP server")
+    g = VGroup(shadow, shell, title)
     g.shell, g.title = shell, title
     return g
 
 
 def make_api_box():
-    """Grey 'your APIs' box with .endpoints (VGroup of three labels)."""
-    shell, title = _shell(3.2, 2.8, GREY, "your APIs")
+    """'your APIs' card with .endpoints (VGroup of three labels)."""
+    shadow, shell, title = _shell(3.2, 2.8, "#D8DCE3", "your APIs",
+                                  title_color=INK)
     endpoints = VGroup(*[
         Text(t, font=CODE_FONT, font_size=16, color=SLATE)
         for t in ["GET /opportunities", "GET /accounts", "POST /deals"]
     ])
     endpoints.arrange(DOWN, buff=0.3, aligned_edge=LEFT)
     endpoints.move_to(shell.get_center() + DOWN * 0.25)
-    g = VGroup(shell, title, endpoints)
+    g = VGroup(shadow, shell, title, endpoints)
     g.shell, g.title, g.endpoints = shell, title, endpoints
     return g
 
@@ -117,7 +132,8 @@ def make_tool_card(name, desc, schema, width=2.7, height=0.95):
 def make_big_tool_card(name, desc, schema, width=6.4, height=3.0):
     """Enlarged card with labelled rows, .rows exposes the three row groups."""
     card = RoundedRectangle(corner_radius=0.14, width=width, height=height)
-    card.set_stroke(TEAL, 2.5).set_fill("#EFF9F7", opacity=1.0)
+    card.set_stroke(TEAL, 2.5).set_fill("#FFFFFF", opacity=1.0)
+    shadow = make_shadow(card)
 
     def row(label, value, value_font, value_size, value_color):
         lab = Text(label, font_size=15, color=MUTED)
@@ -135,7 +151,7 @@ def make_big_tool_card(name, desc, schema, width=6.4, height=3.0):
     )
     rows.arrange(DOWN, buff=0.24, aligned_edge=LEFT)
     rows.move_to(card.get_center())
-    g = VGroup(card, rows)
+    g = VGroup(shadow, card, rows)
     g.card, g.rows = card, rows
     return g
 
