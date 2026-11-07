@@ -24,15 +24,17 @@ ALERT_RED = "#DC4C64"
 OK_GREEN = "#2F9E44"
 
 CODE_FONT = "Menlo"
+UI_FONT = "Avenir Next"   # modern geometric sans, ships with macOS
+SLATE = "#4B5563"         # endpoint labels, readable on white at mobile size
 
 config.background_color = BG
 
 
 # ----------------------------------------------------------------- actors ----
-def _shell(width, height, color, label, label_size=24):
+def _shell(width, height, color, label, label_size=26):
     box = RoundedRectangle(corner_radius=0.18, width=width, height=height)
-    box.set_stroke(color, width=2.5)
-    tag = Text(label, font_size=label_size, color=color)
+    box.set_stroke(color, width=3)
+    tag = Text(label, font=UI_FONT, font_size=label_size, color=color)
     tag.next_to(box.get_top(), DOWN, buff=0.16)
     return box, tag
 
@@ -44,7 +46,7 @@ def make_ai_client():
     llm = RoundedRectangle(corner_radius=0.14, width=2.9, height=2.1)
     llm.set_stroke(PURPLE, 3).set_fill(PURPLE, opacity=0.07)
     llm.move_to(shell.get_center() + UP * 0.75)
-    llm_label = Text("LLM", font_size=24, color=PURPLE)
+    llm_label = Text("LLM", font=UI_FONT, font_size=24, color=PURPLE)
     llm_label.next_to(llm.get_top(), DOWN, buff=0.12)
 
     ctx_outline = Rectangle(width=3.6, height=0.42)
@@ -53,7 +55,7 @@ def make_ai_client():
     ctx_fill = Rectangle(width=0.001, height=0.32)
     ctx_fill.set_stroke(width=0).set_fill(PURPLE_FILL, 0.9)
     ctx_fill.move_to(ctx_outline.get_left() + RIGHT * 0.05)
-    ctx_label = Text("context window", font_size=15, color=MUTED)
+    ctx_label = Text("context window", font=UI_FONT, font_size=16, color=MUTED)
     ctx_label.next_to(ctx_outline, DOWN, buff=0.1)
 
     g = VGroup(shell, title, llm, llm_label, ctx_outline, ctx_fill, ctx_label)
@@ -83,7 +85,7 @@ def make_api_box():
     """Grey 'your APIs' box with .endpoints (VGroup of three labels)."""
     shell, title = _shell(3.2, 2.8, GREY, "your APIs")
     endpoints = VGroup(*[
-        Text(t, font=CODE_FONT, font_size=15, color=LIGHT_GREY)
+        Text(t, font=CODE_FONT, font_size=16, color=SLATE)
         for t in ["GET /opportunities", "GET /accounts", "POST /deals"]
     ])
     endpoints.arrange(DOWN, buff=0.3, aligned_edge=LEFT)
@@ -153,6 +155,13 @@ def make_data_rows(n=3, width=1.4):
     ])
     bars.arrange(DOWN, buff=0.12, aligned_edge=LEFT)
     return bars
+
+
+def make_caption(text):
+    """Burned-in caption for sound-off viewing (LinkedIn), bottom centre."""
+    t = Text(text, font=UI_FONT, font_size=30, color=INK)
+    t.to_edge(DOWN, buff=0.32)
+    return t
 
 
 def make_token_meter():

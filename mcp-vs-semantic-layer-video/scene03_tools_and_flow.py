@@ -12,7 +12,7 @@ from manim import *
 from common import (
     make_ai_client, make_mcp_server, make_api_box,
     make_tool_card, make_big_tool_card, make_packet, make_data_rows,
-    ctx_fill_target,
+    make_caption, ctx_fill_target,
     BG, INK, MUTED, LIGHT_GREY, PURPLE, PURPLE_FILL, TEAL, GREY, CODE_FONT,
 )
 
@@ -36,10 +36,12 @@ class Scene03ToolsAndFlow(Scene):
         wire_left = Line(client.shell.get_right(), server.shell.get_left())
         wire_right = Line(server.shell.get_right(), apis.shell.get_left())
         for w in (wire_left, wire_right):
-            w.set_stroke(GREY, 1.5, opacity=0.45)
+            w.set_stroke(GREY, 2.2, opacity=0.75)
 
+        cap = make_caption("The server exposes your APIs as tools.")
         self.play(FadeIn(client), FadeIn(server), FadeIn(apis),
-                  FadeIn(wire_left), FadeIn(wire_right), run_time=0.6)
+                  FadeIn(wire_left), FadeIn(wire_right), FadeIn(cap),
+                  run_time=0.6)
 
         # ----------------------- beat 1: APIs become tools (0-3 s) --------
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
@@ -48,7 +50,7 @@ class Scene03ToolsAndFlow(Scene):
 
         lift_anims = []
         for ep, card in zip(apis.endpoints, cards):
-            ghost = ep.copy().set_opacity(0.35)
+            ghost = ep.copy().set_opacity(0.55)
             self.add(ghost)
             lift_anims.append(ReplacementTransform(ep, card, path_arc=0.5))
         self.play(LaggedStart(*lift_anims, lag_ratio=0.3), run_time=2.4)
@@ -58,7 +60,10 @@ class Scene03ToolsAndFlow(Scene):
         dim.set_stroke(width=0).set_fill(BG, opacity=0.65)
         big = make_big_tool_card(*TOOL_SPECS[0]).move_to(UP * 0.15)
 
-        self.play(FadeIn(dim), TransformFromCopy(cards[0], big), run_time=0.9)
+        cap2 = make_caption("Each tool has a name, a description, and an input schema.")
+        self.play(FadeIn(dim), TransformFromCopy(cards[0], big),
+                  FadeOut(cap), FadeIn(cap2), run_time=0.9)
+        cap = cap2
 
         for row in big.rows:
             hl = SurroundingRectangle(row, buff=0.1, corner_radius=0.08)
@@ -81,13 +86,16 @@ class Scene03ToolsAndFlow(Scene):
         anchor = client.llm.get_center() + DOWN * 0.25
         for i in range(3):
             targets.append(anchor + UP * (0.55 - 0.55 * i))
+        cap2 = make_caption("The client hands those to the LLM...")
         self.play(
             LaggedStart(*[
                 card.animate.scale(0.42).move_to(pos)
                 for card, pos in zip(minis, targets)
             ], lag_ratio=0.2),
+            FadeOut(cap), FadeIn(cap2),
             run_time=1.6,
         )
+        cap = cap2
 
         chunk = Square(0.26).set_stroke(width=0).set_fill(PURPLE_FILL, 0.9)
         chunk.move_to(client.llm.get_bottom())
@@ -99,8 +107,11 @@ class Scene03ToolsAndFlow(Scene):
                   run_time=0.35)
 
         # ------- beat 4: pick the tool, fill the input (11-14 s) ----------
+        cap2 = make_caption("...which picks the tool that fits and fills in the inputs,")
         self.play(Indicate(client.llm, color=PURPLE, scale_factor=1.05),
+                  FadeOut(cap), FadeIn(cap2),
                   run_time=0.8)
+        cap = cap2
 
         sweep = Rectangle(width=minis[0].width + 0.25, height=0.55)
         sweep.set_stroke(width=0).set_fill(PURPLE, 0.25)
@@ -124,9 +135,11 @@ class Scene03ToolsAndFlow(Scene):
 
         # ------------- beat 5: the server runs it (14-17 s) ---------------
         pkt = make_packet().move_to(minis[0].get_center())
+        cap2 = make_caption("and then the server runs it.")
         self.play(ReplacementTransform(VGroup(minis[0], filled), pkt),
-                  FadeOut(ring),
+                  FadeOut(ring), FadeOut(cap), FadeIn(cap2),
                   run_time=0.5)
+        cap = cap2
 
         self.play(pkt.animate.move_to(
             [pkt.get_x(), wire_left.get_y(), 0]), run_time=0.25)
