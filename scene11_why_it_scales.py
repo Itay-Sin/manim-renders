@@ -54,9 +54,9 @@ class Scene11WhyItScales(Scene):
             c.move_to(RIGHT * (1.95 + 0.05 * (i % 3))
                       + DOWN * 2.0 + UP * i * 0.48)
             tall.add(c)
-        # Word-level sync: the growth finishes as "it can be huge" lands
-        # (heard 3.6-3.9 s) instead of a second before it.
-        self.wait(0.5)
+        # Peak sync: the growth runs 2.2-4.0 s, so its completion lands
+        # ON "huge" (heard 3.9-4.4 s), not half a second before it.
+        self.wait(1.2)
         self.play(
             LaggedStart(*[FadeIn(c, shift=UP * 0.15) for c in tall],
                         lag_ratio=0.12),
@@ -67,7 +67,8 @@ class Scene11WhyItScales(Scene):
         big_tag.rotate(PI / 2)
         big_tag.next_to(tall, RIGHT, buff=0.14)
         self.play(FadeIn(big_tag), run_time=0.4)
-        self.wait(1.0)
+        # No wait: the Indicate accent below then peaks at ~5.0 s, ON
+        # "You only spend tokens" (heard 4.8-5.9 s).
 
         # ------ beat 2: you only pay for the exchange (4.7-9.7 s) ---------
         cap2 = make_caption("You only pay for the short exchange.")
@@ -127,12 +128,21 @@ class Scene11WhyItScales(Scene):
                        color=INK)
         few_tag.next_to(new_unit, DOWN, buff=0.14)
 
+        # Peak sync: the old bill fades in 7.5-7.9 s, peaking on "tens of
+        # thousands" (heard 7.7-8.6 s).
+        self.wait(0.2)
         self.play(FadeIn(old_num), run_time=0.4)
         # The unit fades in with the strike, so it doesn't pop in one frame.
+        # Accent sync: the strike lands 8.2-8.6 s, ON "tokens of
+        # definitions" (heard 8.65 s on); the counter then rises through
+        # "definitions" and settles at 9.7 s, before the voice ends (10.22).
+        self.wait(0.3)
         self.play(Create(strike), FadeIn(new_unit), run_time=0.4)
         self.add(new_num)
         self.play(new_val.animate.set_value(340), run_time=1.1)
         self.play(FadeIn(few_tag), run_time=0.3)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.7)
+        # Motion ends 10.0 s, voice 10.22 s: a 1.2 s static hold leaves a
+        # ~1.0 s silent tail, inside the 0.6-1.2 s window (rule 2).
+        self.wait(1.2)

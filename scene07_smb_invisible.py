@@ -1,4 +1,5 @@
-"""Scene 7: why SMB is invisible. ~11.7 s of motion plus a 1 s hold.
+"""Scene 7: why SMB is invisible. ~11.7 s of motion plus a 0.8 s hold
+(12.5 s; voice ends 11.68).
 
 The LLM searches the tool for SMB and finds nothing, then the candidates
 appear: deal size on the opportunity, segment or employees on the account,
@@ -68,10 +69,13 @@ class Scene07SmbInvisible(Scene):
         # ------ beat 1: not in the tool, not in the schema (0.5-3 s) ------
         big = make_big_tool_card(*TOOL_SPECS[0]).move_to(UP * 0.55)
         cap = make_caption("SMB isn't in the tool or the schema.")
+        # Voice sync: "SMB isn't in the tool" starts at 0.59 heard; the
+        # 0.6 s fade starts half its run ahead (0.3) and PEAKS at 0.9,
+        # between "SMB" and "isn't".
         self.play(FadeIn(big, shift=UP * 0.15), FadeIn(cap), run_time=0.6)
-        # The row scan is "isn't in the tool..." ("isn't" heard at 1.23);
-        # without this hold the first spotlight led the word by 0.33 s.
-        self.wait(0.15)
+        # The row scan's X marks peak at 1.65 / 2.20 / 2.75 - on "tool"
+        # (1.65) and "or the schema" (2.20-2.35).
+        self.wait(0.2)
 
         # A spotlight sweeps each row; nothing matches, a red X per row.
         xs = VGroup()
@@ -86,7 +90,6 @@ class Scene07SmbInvisible(Scene):
             xs.add(x)
             self.play(Create(hl), run_time=0.2)
             self.play(FadeIn(x, scale=0.6), FadeOut(hl), run_time=0.35)
-        self.wait(0.15)
 
         # ------ beat 2: the candidate fields (3.1-7.4 s) ------------------
         opp = make_object_card("Opportunity", ["amount", "status"])
@@ -98,6 +101,9 @@ class Scene07SmbInvisible(Scene):
 
         cap2 = make_caption("Deal size? Or a segment on the account?")
         self.play(FadeOut(cap), run_time=0.2)
+        # Voice sync: "It might be deal size" starts at 3.14 heard. The
+        # 0.7 s swap runs 2.95-3.65 and PEAKS on "deal" (3.59); the amount
+        # pulse right after peaks at 4.00, on "size" (3.83).
         self.play(FadeOut(big), FadeOut(xs),
                   FadeIn(opp), FadeIn(acc), Create(rel), FadeIn(cap2),
                   run_time=0.7)
@@ -105,13 +111,14 @@ class Scene07SmbInvisible(Scene):
 
         self.play(Indicate(opp.fields["amount"], color=AMBER,
                            scale_factor=1.3), run_time=0.7)
-        # "segment" is heard at 6.12; the old 0.9 s wait pulsed it at 5.35.
-        self.wait(1.45)
+        # Voice sync: "segment" is heard at 6.12; the pulse runs 5.75-6.45
+        # and its scale PEAK (mid-run, 6.10) lands on the word. The
+        # employees pulse that follows peaks at 6.75, on "account" (6.72).
+        self.wait(1.4)
         self.play(Indicate(acc.fields["segment"], color=AMBER,
                            scale_factor=1.3), run_time=0.7)
         self.play(Indicate(acc.fields["employees"], color=AMBER,
                            scale_factor=1.3), run_time=0.6)
-        self.wait(0.4)
 
         # ------ beat 3: every customer differs (7.5-11.7 s) ---------------
         cap2 = make_caption("Every customer defines it differently.")
@@ -141,6 +148,10 @@ class Scene07SmbInvisible(Scene):
             a.set_stroke(SLATE, 1.8, opacity=0.75)
             arrows.add(a)
 
+        # Voice sync: "Every customer defines it differently" runs
+        # 7.57-8.79 heard. The lagged tile fade runs 7.25-8.15, spanning
+        # "Every customer" and COMPLETING on "defines" - not starting at
+        # the onset, which left the tiles finishing as the phrase ended.
         self.play(
             LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in tiles],
                         lag_ratio=0.2),
@@ -159,10 +170,14 @@ class Scene07SmbInvisible(Scene):
         badge.set_stroke(PURPLE, 2).set_fill("#FFFFFF", opacity=0.95)
         q_g = VGroup(badge, q.move_to(badge.get_center()))
         q_g.move_to(UP * 2.1)
-        # The badge answers "can't know which" ("can't" heard at 10.51).
-        self.wait(0.35)
+        # Voice sync: the badge answers "can't know which" ("can't" heard
+        # at 10.51). The 0.5 s fade runs 10.25-10.75 and PEAKS between
+        # "can't" and "know" (10.78).
+        self.wait(0.9)
         self.play(FadeIn(q_g, scale=0.5), run_time=0.5)
-        self.wait(1.4)
+        # Tail: voice ends at 11.68; nothing animates after 10.75, and the
+        # static hold past the voice is ~0.8 s.
+        self.wait(0.95)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.5)
+        self.wait(0.8)

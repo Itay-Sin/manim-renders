@@ -1,4 +1,4 @@
-"""Scene 6: the turn. ~4 s of motion plus a 1 s hold.
+"""Scene 6: the turn. ~5.4 s of motion plus a 0.6 s hold (6.0 s).
 
 One word changes and the whole thing breaks: SMB lands in the question in
 red, and the frame dims around it. Ends dimmed, which scene 7 opens on.
@@ -64,8 +64,11 @@ class Scene06TheTurn(Scene):
         bubble = make_bubble("show me my open opportunities", width=4.6)
         bubble.scale(0.9).move_to(UP * 3.38)
         cap = make_caption("Now change one word.")
+        # Voice sync: "Now change one word" is heard 0.59-1.21 (word table
+        # + 0.5 s mux delay). The 0.6 s fade starts half its run ahead at
+        # 0.3, so the bubble PEAKS at 0.9, on "change one".
         self.play(FadeIn(bubble, shift=DOWN * 0.2), FadeIn(cap), run_time=0.6)
-        self.wait(0.3)
+        self.wait(0.4)
 
         # ------------- beat 2: SMB lands, in red (1.8-3.7 s) --------------
         # The new text colours only the new word. Text drops spaces from its
@@ -77,6 +80,10 @@ class Scene06TheTurn(Scene):
         self.play(FadeOut(cap), run_time=0.2)
         # A sequential swap, not FadeTransform: transforming one bubble into
         # the other left the new text's word spacing mangled.
+        # Voice sync: "Show me my open SMB opportunities" starts at 1.88
+        # heard. The new bubble's 0.4 s fade runs 1.7-2.1, so it PEAKS at
+        # 2.1, on "my open", with the red SMB fully legible before the word
+        # "SMB" itself lands at 2.65.
         self.play(FadeOut(bubble), run_time=0.2)
         self.play(FadeIn(bubble2), FadeIn(cap2), run_time=0.4)
         cap = cap2
@@ -86,6 +93,8 @@ class Scene06TheTurn(Scene):
         shade.set_stroke(width=0).set_fill(BG, opacity=0.0)
         self.add(shade)
         self.add(bubble2, cap)  # keep the question and caption above the dim
+        # Voice sync: the dim runs 2.1-2.6 and COMPLETES right as "SMB" is
+        # heard at 2.65 - the word lands on an already-dimmed frame.
         self.play(shade.animate.set_fill(BG, opacity=0.65), run_time=0.5)
 
         # The hinge of the whole video is one word, so the word becomes an
@@ -94,6 +103,11 @@ class Scene06TheTurn(Scene):
         big_smb = bubble2.text[12:15].copy()
         big_smb.set_z_index(3)
         self.add(big_smb)
+        # Voice sync: the jump-out is the scene's dramatic beat and
+        # deliberately runs PAST the voice (ends 4.17): it launches at 3.1,
+        # right on "opportunities" (3.09 heard), and the box closes around
+        # it at 4.0, so the boxed hold spans the voice ending.
+        self.wait(0.5)
         self.play(big_smb.animate.scale(4.5).move_to(DOWN * 0.3),
                   run_time=0.6)
         box = SurroundingRectangle(big_smb, buff=0.22, corner_radius=0.12)

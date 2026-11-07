@@ -91,8 +91,10 @@ class Scene05Knowledge(Scene):
         ])
         fill_a = ctx_fill_target(client, 0.62)
         # Word-level sync: the fly belongs to "comes from those descriptions"
-        # ("comes" heard at 3.78), so hold after the caption before moving.
-        self.wait(1.05)
+        # ("comes" heard at 3.78). Peak-on-phrase: the 1.15 s fly starts at
+        # ~3.47 (about half early) so it COMPLETES at ~4.7, on
+        # "descriptions" (heard 4.45), not a second after it.
+        self.wait(0.8)
         # Fade the chunks in before they fly, so they don't pop in one frame.
         self.play(FadeIn(chunks, lag_ratio=0.15, scale=0.6), run_time=0.25)
         self.play(
@@ -103,11 +105,11 @@ class Scene05Knowledge(Scene):
             run_time=1.15,
         )
         # The merge into the bar is "sit in its context window" ("sit" heard
-        # at 5.85); let the chunks rest at the bar edge until then.
-        self.wait(1.1)
+        # at 5.85); the 0.4 s merge runs ~5.67-6.07, peaking right on it.
+        self.wait(1.0)
         self.play(FadeOut(chunks), Transform(client.ctx_fill, fill_a),
                   run_time=0.4)
-        self.wait(1.4)
+        self.wait(1.33)
 
         # --------------------- beat 3: that costs tokens (7.7-9) ----------
         cap2 = make_caption("That costs tokens.")
@@ -127,9 +129,12 @@ class Scene05Knowledge(Scene):
                   run_time=0.5)
         self.add(meter_num)
         cap = cap2
-        # Beat 4's caption and ghost servers belong to "five servers" (heard
-        # 10.72), not to the sentence's preamble "In one Anthropic example".
-        self.wait(2.0)
+        # The meter play above runs ~7.6-8.13, peaking on "costs tokens"
+        # (heard 7.95-8.8). Beat 4's ghost servers belong to "five servers"
+        # (heard 10.72), not to the preamble "In one Anthropic example":
+        # the 1.0 s stack starts ~10.2 (half early) and completes at ~11.2,
+        # on "servers".
+        self.wait(1.87)
 
         # ------ beat 4: five servers, 55k tokens (9.1-14.5) ---------------
         cap2 = make_caption("Five servers: ~55,000 tokens before any work.")
@@ -189,10 +194,13 @@ class Scene05Knowledge(Scene):
                           color=MUTED)
         before_tag.next_to(meter_unit, DOWN, buff=0.08, aligned_edge=RIGHT)
         self.play(FadeIn(before_tag), run_time=0.3)
-        self.wait(1.0)
+        # Rule-2 tail: the voice ends ~15.0 ("alone" heard 14.3). The ghost
+        # servers' exit is the one short settle, starting at voice end.
+        self.wait(0.87)
 
         # The extra servers leave; the cost stays.
-        self.play(FadeOut(extras), FadeOut(x5), run_time=0.8)
+        self.play(FadeOut(extras), FadeOut(x5), run_time=0.6)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.2)
+        # Settle ends ~15.6; static hold 0.9 s.
+        self.wait(0.9)

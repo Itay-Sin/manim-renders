@@ -1,4 +1,5 @@
-"""Scene 9: the semantic layer. ~12 s of motion plus a 1 s hold.
+"""Scene 9: the semantic layer. ~11.7 s of motion plus a 1.2 s hold
+(12.9 s; voice ends 12.21).
 
 The red fades, the actors make room, and an amber zone slides in between the
 MCP server and your APIs: the semantic model, pure knowledge. Ends on the
@@ -63,6 +64,8 @@ class Scene09SemanticLayer(Scene):
 
         # ------ beat 1: the gap gets filled (0.5-3 s) ---------------------
         cap = make_caption("That gap is what a semantic layer fills.")
+        # Voice sync: "That gap" is heard at 0.60; the 0.6 s un-dim starts
+        # half its run ahead at 0.3 and PEAKS on "gap".
         self.play(FadeOut(shade), FadeOut(bubble), FadeIn(cap), run_time=0.6)
 
         # The actors make room: everything compacts, and the context window
@@ -73,10 +76,10 @@ class Scene09SemanticLayer(Scene):
             server.animate.scale(0.65).move_to(UP * 0.6),
             apis.animate.scale(0.7).move_to(DOWN * 2.82),
             FadeOut(wire_top), FadeOut(wire_bot),
-            run_time=0.9,
+            run_time=0.8,
         )
         self.play(Transform(client.ctx_fill, ctx_fill_target(client, 0.08)),
-                  run_time=0.3)
+                  run_time=0.25)
 
         zone = make_sem_zone().move_to(DOWN * 1.2)
         w1 = Line(client.shell.get_bottom(), server.shell.get_top())
@@ -84,8 +87,11 @@ class Scene09SemanticLayer(Scene):
         w3 = Line(zone.shell.get_bottom(), apis.shell.get_top())
         for w in (w1, w2, w3):
             w.set_stroke(GREY, 2.2, opacity=0.75)
+        # Voice sync: "a semantic layer fills" runs 1.54-2.26 heard. The
+        # 0.75 s slide runs 1.95-2.70 and PEAKS as "fills" finishes - the
+        # zone is seated exactly when the sentence says the gap is filled.
         self.play(FadeIn(zone, shift=LEFT * 0.6),
-                  FadeIn(w1), FadeIn(w2), FadeIn(w3), run_time=0.8)
+                  FadeIn(w1), FadeIn(w2), FadeIn(w3), run_time=0.75)
 
         # ------ beat 2: the semantic model builds up (3-7.8 s) ------------
         cap2 = make_caption("At its heart: a semantic model, in business terms.")
@@ -95,16 +101,18 @@ class Scene09SemanticLayer(Scene):
 
         stack = make_sem_stack(4)
         stack.move_to(zone.shell.get_center() + LEFT * 1.7 + DOWN * 0.08)
-        # Word-level sync: hold until "a semantic model" (heard 3.9 s) before
-        # the stack builds.
-        self.wait(0.4)
+        # Voice sync: "a semantic model" starts at 3.96 heard. The 1.4 s
+        # lagged build starts half its run ahead at 3.3 and COMPLETES at
+        # 4.7, on "model" (4.52) rolling into "files" (5.20) - the stack
+        # is standing while the words that name it play.
+        self.wait(0.1)
         self.play(
             LaggedStart(*[FadeIn(c, shift=UP * 0.12, scale=0.8)
                           for c in stack.cards], lag_ratio=0.25),
             run_time=1.4,
         )
         self.play(FadeIn(stack.label), run_time=0.3)
-        self.wait(2.2)
+        self.wait(2.45)
 
         # ------ beat 3: objects, relations, words (7.8-11.1 s) ------------
         cap2 = make_caption("The objects, how they relate, your words.")
@@ -117,10 +125,12 @@ class Scene09SemanticLayer(Scene):
         acc.move_to(zone.shell.get_center() + RIGHT * 2.05 + UP * 0.08)
         rel = Line(opp.card.get_right(), acc.card.get_left())
         rel.set_stroke(AMBER, 2.5)
+        # Voice sync: "The objects" runs 7.93-8.09 heard; the 0.6 s fade
+        # runs 7.65-8.25 and PEAKS on "objects".
         self.play(FadeIn(opp), FadeIn(acc), FadeIn(cap2), run_time=0.6)
-        # Word-level sync: the relation line draws on "how they relate"
-        # (heard 9.0 s), not right after the cards.
-        self.wait(0.5)
+        # The relation line draws on "how they relate": the 0.4 s Create
+        # runs 8.85-9.25 and COMPLETES on "relate" (9.24).
+        self.wait(0.6)
         self.play(Create(rel), run_time=0.4)
 
         tag_open = Text("“open”", font=UI_FONT, font_size=12,
@@ -129,20 +139,24 @@ class Scene09SemanticLayer(Scene):
                        color=AMBER)
         tag_open.next_to(opp, DOWN, buff=0.1)
         tag_smb.next_to(acc, DOWN, buff=0.1)
-        # Word-level sync: the word tags land on "and what your words mean"
-        # (heard 10.0 s).
-        self.wait(0.6)
+        # Voice sync: "and what your words mean" starts at 9.97 heard; the
+        # 0.5 s tag fade runs 9.80-10.30 and PEAKS on "words" (10.33).
+        self.wait(0.55)
         self.play(FadeIn(tag_open, shift=UP * 0.08),
                   FadeIn(tag_smb, shift=UP * 0.08), run_time=0.5)
-        self.wait(0.6)
+        self.wait(0.3)
 
         # ------ beat 4: pure knowledge (11.2 s) ---------------------------
         cap2 = make_caption("Pure knowledge.")
         self.play(FadeOut(cap), run_time=0.2)
+        # Voice sync: "Pure knowledge" runs 11.24-11.41 heard; the amber
+        # flare runs 10.8-11.3 and PEAKS on "Pure", and the 0.4 s settle
+        # back ends at 11.7, inside the word's decay. Voice ends 12.21;
+        # nothing animates after the settle.
         self.play(FadeIn(cap2),
                   zone.shell.animate.set_stroke(AMBER, 4),
                   run_time=0.5)
         self.play(zone.shell.animate.set_stroke(AMBER, 2.5), run_time=0.4)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.5)
+        self.wait(1.2)

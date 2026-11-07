@@ -1,4 +1,5 @@
-"""Scene 8: two bad options. ~11.6 s of motion plus a 1 s hold.
+"""Scene 8: two bad options. ~11.4 s of motion plus a 1.2 s hold
+(12.6 s; voice ends 11.56).
 
 Option 1: stuff every field into the descriptions and the context explodes.
 Option 2: let the LLM explore and write the query, and it's still guessing.
@@ -84,6 +85,9 @@ class Scene08TwoBadOptions(Scene):
         p1 = panel("option 1").move_to(UP * 1.62)
         p2 = panel("option 2").move_to(DOWN * 1.38)
         cap = make_caption("That leaves two bad options.")
+        # Voice sync: "That leaves two bad options" runs 0.59-1.46 heard.
+        # The 0.7 s fade starts half its run ahead at 0.3 and PEAKS at
+        # 1.0, on "two bad".
         self.play(FadeIn(p1, shift=UP * 0.1), FadeIn(p2, shift=UP * 0.1),
                   FadeIn(cap), run_time=0.7)
         self.wait(0.9)
@@ -117,9 +121,13 @@ class Scene08TwoBadOptions(Scene):
         # other on fanned arcs: all eight flying at once crossed each other
         # as overlapping text.
         self.play(FadeIn(chips, lag_ratio=0.08), run_time=0.3)
-        # The chips appear on "every field and value" and fly on "in the
-        # tool descriptions" ("in" heard at 4.03): hold between the two.
-        self.wait(0.95)
+        # Voice sync: the chips appear on "every field and value"
+        # (2.63-3.56 heard) and fly on "in the tool descriptions". The
+        # 1.3 s flight starts half its run ahead of "in" (4.03): it runs
+        # 3.40-4.70 and PEAKS on "descriptions" (4.49). Started at the
+        # word onset, the last chip was still mid-air half a second after
+        # the phrase ended.
+        self.wait(0.5)
         self.play(
             LaggedStart(*[
                 c.animate(path_arc=-0.45).scale(0.4)
@@ -134,11 +142,14 @@ class Scene08TwoBadOptions(Scene):
         spill = Rectangle(width=2.15, height=0.24)
         spill.set_stroke(width=0).set_fill(ALERT_RED, 0.75)
         spill.move_to(bar_out.get_left() + RIGHT * (0.05 + 1.075))
+        # Voice sync: "your context explodes" - "explodes" heard at 6.22.
+        # The 0.6 s burst runs 5.6-6.2 and COMPLETES on the word; the red
+        # outline snap right after is the accent's aftermath.
+        self.wait(0.6)
         self.play(Transform(bar_fill, spill), run_time=0.6)
         self.play(bar_out.animate.set_stroke(ALERT_RED, 2.5), run_time=0.3)
-        # Shorter than it was: option 2's caption belongs on "Or" (heard
-        # 7.24) and the chip-fly hold above already spent the slack.
-        self.wait(0.75)
+        # Option 2's caption belongs on "Or" (heard 7.24).
+        self.wait(0.3)
 
         # ------------- beat 3, option 2: explore and guess (7.1-10.6) -----
         cap2 = make_caption("Or the LLM explores, and it's still guessing.")
@@ -158,6 +169,8 @@ class Scene08TwoBadOptions(Scene):
         data_g = VGroup(data_box, data_tag)
         data_g.move_to(p2.box.get_center() + RIGHT * 1.9 + UP * 0.35)
 
+        # Voice sync: "Or let the LLM explore" starts at 7.24 heard; the
+        # 0.4 s fade runs 7.0-7.4 and PEAKS on "let the LLM".
         self.play(FadeIn(llm_g), FadeIn(data_g), FadeIn(cap2), run_time=0.4)
 
         for probe in ["list objects", "list fields", "sample values"]:
@@ -168,14 +181,18 @@ class Scene08TwoBadOptions(Scene):
             lab.move_to(pill.get_center())
             pkt = VGroup(pill, lab)
             pkt.move_to(llm_g.get_right() + RIGHT * 0.2)
-            # Quicker probes than the first cut: the guessed join has to be
-            # on screen by "write the query itself" ("write" heard at 9.09).
-            self.play(FadeIn(pkt, scale=0.6), run_time=0.10)
+            # Quicker probes than the first cut: the probes cover "explore"
+            # (8.13) and must clear the stage by 8.9 so the query names can
+            # peak on "write the query" ("write" heard at 9.09). Run_times
+            # are exact 15 fps frame counts (1, 3, 2, 1): manim rounds each
+            # play UP to whole frames, and the rounding across 12 tiny plays
+            # pushed everything after the probes half a second late.
+            self.play(FadeIn(pkt, scale=0.6), run_time=0.067)
             self.play(pkt.animate.next_to(data_g, LEFT, buff=0.1),
-                      run_time=0.25)
+                      run_time=0.2)
             self.play(pkt.animate.move_to(llm_g.get_right() + RIGHT * 0.2)
-                      .scale(0.7), run_time=0.20)
-            self.play(FadeOut(pkt, scale=0.3), run_time=0.10)
+                      .scale(0.7), run_time=0.133)
+            self.play(FadeOut(pkt, scale=0.3), run_time=0.067)
 
         # Then it writes the query itself: a guessed join, dashed and wobbly.
         q_opp = Text("Opportunity", font=UI_FONT, font_size=13, color=INK)
@@ -194,15 +211,21 @@ class Scene08TwoBadOptions(Scene):
         qmark = Text("?", font=UI_FONT, font_size=22, color=ALERT_RED,
                      weight=BOLD)
         qmark.move_to(p2.box.get_center() + DOWN * 0.45)
+        # Voice sync: the query names peak at 9.2, on "write the query"
+        # (9.09-9.37 heard).
         self.play(FadeIn(q_opp), FadeIn(q_acc), run_time=0.3)
-        # The wobbly join is "and it's still guessing" ("and" heard 10.44).
-        self.wait(0.55)
+        # The wobbly join is "and it's still guessing": the 0.6 s draw runs
+        # ~10.3-10.9 as rendered and COMPLETES on "guessing" (10.85).
+        self.wait(0.8)
         self.play(Create(wobbly), FadeIn(qmark, scale=0.6), run_time=0.6)
 
         # ------------- both are dead ends ---------------------------------
+        # Tail: the red verdict is the scene's one settle; it completes at
+        # ~11.6, right as the voice ends (11.56); nothing animates after it.
+        self.wait(0.133)
         self.play(p1.box.animate.set_stroke(ALERT_RED, 2.5),
                   p2.box.animate.set_stroke(ALERT_RED, 2.5),
                   run_time=0.5)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.5)
+        self.wait(1.2)

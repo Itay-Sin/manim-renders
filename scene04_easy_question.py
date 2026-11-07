@@ -178,11 +178,11 @@ class Scene04EasyQuestion(Scene):
                 m.animate.move_to(client.ctx_outline.get_center())
                 for m in moving
             ], lag_ratio=0.18),
-            run_time=0.45,
+            run_time=0.4,
         )
         fill2 = ctx_fill_target(client, 0.55)
         self.play(FadeOut(moving), Transform(client.ctx_fill, fill2),
-                  run_time=0.3)
+                  run_time=0.25)
 
         # ------ beat 4: only what the tool spells out (10-12 s) -----------
         cap2 = make_caption("It can only ask for what the tool spells out.")
@@ -195,6 +195,10 @@ class Scene04EasyQuestion(Scene):
         shade.set_stroke(width=0).set_fill(BG, opacity=0.0)
         self.add(shade)
         self.add(cards[0])  # re-adding lifts the spotlighted card above the shade
+        # Voice sync: the round trip above blocks an earlier start, so the
+        # spotlight PEAKS on the phrase's stressed ending instead — the ring
+        # completes at ~9.5, on "spells out" (heard ~9.5-10.1, word table
+        # 8.98/9.33 + 0.5 s mux delay); the 0.4 + 0.25 return buys it 0.1 s.
         self.play(FadeIn(cap2), Create(ring),
                   shade.animate.set_fill(BG, opacity=0.35),
                   run_time=0.6)
@@ -203,6 +207,6 @@ class Scene04EasyQuestion(Scene):
         self.play(FadeOut(shade), FadeOut(ring), run_time=0.4)
 
         # ------------------------------------------------- final hold ----
-        # Audio (9.94 s mp3 + 0.5 s mux delay) ends ~10.4 s; this leaves a
-        # ~1.1 s tail, above the 0.9 s minimum.
-        self.wait(1.2)
+        # Audio (9.94 s mp3 + 0.5 s mux delay) ends ~10.4 s; the un-spotlight
+        # settles just before it, so this is a ~1.1 s static tail.
+        self.wait(1.1)

@@ -33,9 +33,12 @@ class Scene01Hook(Scene):
         cap = make_caption("MCP and the semantic layer often get mixed up.")
         self.play(FadeIn(mcp, scale=0.9), FadeIn(sem, scale=0.9), FadeIn(cap),
                   run_time=0.9)
-        # Voice sync: "mixed up" is heard at ~4.4 s (word table + 0.5 s mux
-        # delay), so the tangle waits for it instead of leading it by 3 s.
-        self.wait(2.9)
+        # Voice sync: "mixed up" is heard at ~4.4-5.1 s (word table + 0.5 s
+        # mux delay). The beat PEAKS on the phrase rather than starting on
+        # it: a 1.3 s eased drift starting at 3.55 collides at ~4.6-4.85,
+        # right on the words. Starting at the word onset put the collision
+        # a second into the next sentence.
+        self.wait(2.35)
 
         # They drift into each other: the "mixed up" tangle. Corners overlap,
         # both labels stay readable. No set_opacity here: on the whole chip
@@ -61,8 +64,10 @@ class Scene01Hook(Scene):
         bubble = make_bubble("show me my open SMB opportunities", width=4.9)
         bubble.move_to(DOWN * 1.3)
         cap2 = make_caption("Let's walk through both, with one example question.")
-        # Voice sync: the bubble must not lead "one example question" (heard
-        # ~6.6-7.2 s), so the swap follows the snap with no wait.
+        # Voice sync: the bubble lands mid "one example question" (heard
+        # ~6.6-7.7 s). The 0.55 wait gives back what the earlier beats
+        # borrowed, keeping the scene's total length unchanged.
+        self.wait(0.55)
         self.play(FadeOut(cap), run_time=0.2)
         self.play(FadeIn(bubble, shift=UP * 0.2), FadeIn(cap2), run_time=0.7)
         cap = cap2

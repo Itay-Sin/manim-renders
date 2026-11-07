@@ -90,10 +90,13 @@ class Scene12Close(Scene):
             w.set_stroke(GREY, 2, opacity=0.45)
 
         cap = make_caption("Two different tools.")
+        # Peak sync: the cards rise 0.6-1.4 s, peaking ON "two different
+        # tools" (heard 1.3-2.2 s) rather than on "So, these are".
+        self.wait(0.3)
         self.play(FadeIn(mcp, shift=UP * 0.15), FadeIn(sem, shift=UP * 0.15),
                   FadeIn(sys_g), FadeIn(wire_m), FadeIn(wire_s), FadeIn(cap),
                   run_time=0.8)
-        self.wait(1.0)
+        self.wait(0.8)
 
         # ------ beat 2: MCP acts (2.5-5.2 s) ------------------------------
         cap2 = make_caption("MCP reaches your systems and acts.")
@@ -117,13 +120,16 @@ class Scene12Close(Scene):
         self.play(FadeIn(pkt, scale=0.5), run_time=0.2)
         self.play(pkt.animate.move_to(systems.get_top() + UP * 0.05),
                   run_time=0.7)
-        # Word-level sync: the strike lands on "and acts on them"
-        # (heard 4.3 s).
-        self.wait(0.3)
+        # Accent sync: the teal snap runs 4.3-4.55 s, ON "acts"
+        # (heard 4.41 s); the card pop before it peaked ON "MCP" (2.56 s)
+        # and the packet landed ON "systems" (3.6-4.2 s).
+        self.wait(0.4)
         self.play(FadeOut(pkt, scale=0.4),
                   systems.animate.set_stroke(TEAL, 4), run_time=0.25)
         self.play(systems.animate.set_stroke(GREY, 2.5), run_time=0.25)
-        self.wait(0.5)
+        # Peak sync: the sem pop below runs 5.25-5.95 s, peaking ON
+        # "the semantic layer" (heard 5.4-6.1 s).
+        self.wait(0.25)
 
         # ------ beat 3: the layer understands (5.3-7.3 s) -----------------
         cap2 = make_caption("The semantic layer understands your data.")
@@ -138,7 +144,10 @@ class Scene12Close(Scene):
                   .scale(1.04).set_stroke(AMBER, 4),
                   run_time=0.7)
         cap = cap2
-        self.wait(1.3)
+        # Peak sync: the update_deal chip below fades in 7.2-7.7 s,
+        # peaking ON "Simple actions" (heard 7.4-8.1 s), and its dive
+        # lands ON "need MCP" (heard 8.2-9.0 s).
+        self.wait(1.05)
 
         # ------ beat 4: simple actions, MCP (7.4-9.3 s) -------------------
         cap2 = make_caption("Simple actions: MCP.")
@@ -160,7 +169,9 @@ class Scene12Close(Scene):
         ])
         self.play(MoveAlongPath(act_g, path), run_time=0.9)
         self.play(FadeOut(act_g, scale=0.4), run_time=0.2)
-        self.wait(0.3)
+        # Peak sync: the question chip fades in 9.2-9.7 s, peaking ON
+        # "Open questions" (heard 9.5-10.2 s).
+        self.wait(0.2)
 
         # ------ beat 5: open questions, the layer (9.4-12.9 s) ------------
         cap2 = make_caption("Open questions: the semantic layer.")
@@ -176,18 +187,21 @@ class Scene12Close(Scene):
         q_g.move_to(sem.box.get_top() + UP * 0.35)
         self.play(FadeIn(q_g, shift=DOWN * 0.15), FadeIn(cap2), run_time=0.5)
         cap = cap2
+        # Peak sync: the settle onto the card runs 9.85-10.55 s, peaking
+        # on "your business's" (heard 10.3-11.0 s).
+        self.wait(0.15)
         self.play(q_g.animate.scale(0.8).move_to(sem.box.get_center()
                                                  + DOWN * 0.1),
                   run_time=0.7)
         # Circumscribe, not Indicate: Indicate flooded the file-card icon
         # solid dark amber mid-flash.
-        # Word-level sync: the ring answers "need the semantic layer"
-        # (heard 11.8 s), so the question sits on the card through
-        # "business's own words" first.
-        self.wait(0.9)
+        # Accent sync: the ring draws 11.7-12.3 s, ON "the semantic layer"
+        # (heard 11.9-12.9 s), after the question has sat on the card
+        # through "business's own words".
+        self.wait(1.15)
         self.play(Circumscribe(sem.icon, color=AMBER, buff=0.08),
                   FadeOut(q_g), run_time=0.6)
-        self.wait(0.6)
+        self.wait(0.45)
 
         # ------ beat 6: sometimes both (13-17 s) --------------------------
         cap2 = make_caption("Sometimes both: the layer finds, MCP acts.")
@@ -209,9 +223,11 @@ class Scene12Close(Scene):
         finder = RoundedRectangle(corner_radius=0.08, width=0.4, height=0.18)
         finder.set_stroke(width=0).set_fill(AMBER, 1.0)
         finder.move_to(sem.box.get_bottom() + DOWN * 0.1)
-        # Word-level sync: the finder sets off on "the layer finds the
-        # records" (heard 14.7 s), not during "you need both".
-        self.wait(0.9)
+        # Peak sync: the rows above faded in 12.95-13.45 s, peaking on
+        # "sometimes you need both"; the finder fades 14.8-15.0 s and
+        # travels 15.0-15.4 s, arriving ON "finds the records" (heard
+        # 15.1-16.0 s), and the ring completes on "records".
+        self.wait(1.35)
         # Fade in before moving, so the pill doesn't pop in a single frame.
         self.play(Succession(
             FadeIn(finder, scale=0.5, run_time=0.2),
@@ -224,9 +240,10 @@ class Scene12Close(Scene):
         actor = RoundedRectangle(corner_radius=0.08, width=0.4, height=0.18)
         actor.set_stroke(width=0).set_fill(TEAL, 1.0)
         actor.move_to(mcp.box.get_bottom() + DOWN * 0.1)
-        # Word-level sync: the actor sets off on "and an MCP tool acts"
-        # (heard 16.7 s), not while the records are still being named.
-        self.wait(0.8)
+        # Peak sync: the actor fades 16.3-16.5 s, travels 16.5-16.9 s, and
+        # the teal snap runs 16.9-17.3 s, peaking ON "acts" (heard
+        # 17.27 s); the green settle rides out "on them".
+        self.wait(0.4)
         # Fades in before moving, and parks above the ring: at UP*0.2 it
         # landed on the ring's border.
         self.play(Succession(
@@ -255,4 +272,7 @@ class Scene12Close(Scene):
                   run_time=0.5)
 
         # ------------------------------------------------- final hold ----
+        # Voice ends 18.16 s; the lockup fade (18.2-18.7 s) is the one
+        # short settle rule 2 allows, and this hold is static. 1.9 s sits
+        # inside the 2.0 s ceiling granted to the video's close.
         self.wait(1.9)

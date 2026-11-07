@@ -57,9 +57,11 @@ class Scene02WhatIsMCP(Scene):
         # opening wait the pulse runs 3.7-4.5 s, right on "port".
         self.wait(2.6)
         self.play(Indicate(port, color=TEAL, scale_factor=1.35), run_time=0.8)
-        # Voice sync: the client row must not lead "any compatible AI client"
-        # (heard ~8.0-9.4 s), so the hold stretches to put the row at 7.9 s.
-        self.wait(3.2)
+        # Voice sync: "any compatible AI client" is heard ~8.2-9.4 s. The
+        # row's lagged fade takes 1.2 s, so it starts at 7.3 and COMPLETES
+        # on the phrase; started at the word onset it finished only as the
+        # phrase ended, leaving the top half empty while the words played.
+        self.wait(2.6)
 
         # Three AI clients appear in a row above.
         clients = VGroup(small_client("Claude"),
@@ -76,9 +78,9 @@ class Scene02WhatIsMCP(Scene):
         cap = cap2
 
         # Each client extends a cable into the same port, with a click flash.
-        # Voice sync: cable 1 lands on "like Claude" (~10.1-10.6 s heard),
-        # cable 2 on "or ChatGPT" (~10.7-11.3 s), cable 3 on "can connect"
-        # (~12.0-12.7 s) - one 1.0 s create+flash per name.
+        # Voice sync: each cable DRAWS AHEAD of its name so the click flash
+        # lands on the word - flash 1 at ~10.1 ("Claude"), flash 2 at ~11.1
+        # ("ChatGPT"), flash 3 at ~12.1 ("connect").
         self.wait(0.7)
         plug_point = port.get_top() + UP * 0.02
         cables = VGroup()
@@ -93,23 +95,24 @@ class Scene02WhatIsMCP(Scene):
             self.play(Flash(port, color=TEAL, line_length=0.14, num_lines=8),
                       run_time=0.2)
 
-        self.wait(0.4)
+        self.wait(0.3)
 
         # Two clients leave; one stays: the base layout for the next scenes.
+        # The transition is compressed into the last words ("can connect to
+        # it" ends ~13.1 s) - the operator cut the original 2.5 s silent
+        # tail: nothing substantial may animate after the voice ends.
         keeper = clients[2]
         self.play(
             FadeOut(clients[0]), FadeOut(clients[1]),
             FadeOut(cables[0]), FadeOut(cables[1]),
-            run_time=0.8,
+            run_time=0.6,
         )
         # The curved cable straightens into the vertical wire of the base
         # layout as the remaining client takes centre stage.
         wire = Line([0, 1.9, 0] + DOWN * 0.62, port.get_top())
         wire.set_stroke(GREY, 2.2, opacity=0.75)
         self.play(keeper.animate.scale(1.35).move_to(UP * 1.9),
-                  ReplacementTransform(cables[2], wire), run_time=0.8)
+                  ReplacementTransform(cables[2], wire), run_time=0.6)
 
         # ------------------------------------------------- final hold ----
-        # Audio (12.58 s mp3 + 0.5 s mux delay) ends ~13.1 s; the leave +
-        # straighten transition and this hold leave a ~2.5 s visual tail.
-        self.wait(0.8)
+        self.wait(0.6)
