@@ -38,8 +38,8 @@ class Scene03ToolsAndFlow(Scene):
         grid = make_dot_grid()
         strip = make_title_strip("MCP", "Tools and the flow")
         client = make_ai_client().move_to(UP * 1.78)
-        server = make_mcp_server().move_to(DOWN * 0.75)
-        apis = make_api_box().move_to(DOWN * 2.4)
+        server = make_mcp_server().move_to(DOWN * 0.92)
+        apis = make_api_box().move_to(DOWN * 2.52)
 
         wire_top = Line(client.shell.get_bottom(), server.shell.get_top())
         wire_bot = Line(server.shell.get_bottom(), apis.shell.get_top())
@@ -115,12 +115,12 @@ class Scene03ToolsAndFlow(Scene):
         # ----------- beat 3: cards go UP to the LLM (8-11 s) --------------
         minis = cards  # same objects, shrunk into a row inside the LLM box
         anchor = client.llm.get_center() + DOWN * 0.1
-        targets = [anchor + RIGHT * dx for dx in (-1.08, 0.0, 1.08)]
+        targets = [anchor + RIGHT * dx for dx in (-1.0, 0.0, 1.0)]
         cap2 = make_caption("The client hands those to the LLM...")
         self.play(FadeOut(cap), run_time=0.2)
         self.play(
             LaggedStart(*[
-                card.animate.scale(0.6).move_to(pos)
+                card.animate.scale(0.56).move_to(pos)
                 for card, pos in zip(minis, targets)
             ], lag_ratio=0.2),
             FadeIn(cap2),

@@ -33,32 +33,30 @@ class Scene06TheTurn(Scene):
         bg = make_background()
         grid = make_dot_grid()
         client = make_ai_client().move_to(UP * 1.78)
-        server = make_mcp_server().move_to(DOWN * 0.75)
-        apis = make_api_box().move_to(DOWN * 2.4)
+        server = make_mcp_server().move_to(DOWN * 0.92)
+        apis = make_api_box().move_to(DOWN * 2.52)
 
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
         cards.arrange(RIGHT, buff=0.18)
         cards.scale_to_fit_width(5.1)
-        for card, dx in zip(cards, (-1.08, 0.0, 1.08)):
-            card.scale(0.6).move_to(
+        for card, dx in zip(cards, (-1.0, 0.0, 1.0)):
+            card.scale(0.56).move_to(
                 client.llm.get_center() + DOWN * 0.1 + RIGHT * dx)
         apis.endpoints.set_opacity(0.55)
         client.ctx_fill.become(ctx_fill_target(client, 0.92))
 
-        # Matches scene 5's end state: the meter's right edge is pinned
-        # inside the shell (it overflowed when hung off the title), and the
-        # "before any work" tag carries over so nothing jumps at the cut.
+        # Matches scene 5's end state: one meter row — number, unit, tag —
+        # centred in the gap between the LLM box and the context bar, so
+        # nothing jumps at the cut (operator note 2026-11-07).
         meter_num = Text("55,000", font=UI_FONT, font_size=18, color=INK)
         meter_unit = Text("tokens", font=UI_FONT, font_size=12, color=MUTED)
-        meter = VGroup(meter_num, meter_unit).arrange(RIGHT, buff=0.1,
-                                                      aligned_edge=DOWN)
-        meter.next_to(client.title, RIGHT, buff=0.45)
-        meter.shift(LEFT * (meter.get_right()[0]
-                            - client.shell.get_right()[0] + 0.3))
         before_tag = Text("before any work", font=UI_FONT, font_size=11,
                           color=MUTED)
-        before_tag.next_to(meter_unit, DOWN, buff=0.12, aligned_edge=RIGHT)
-        meter.add(before_tag)
+        meter = VGroup(meter_num, meter_unit, before_tag)
+        meter.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+        gap_y = (client.llm.get_bottom()[1]
+                 + client.ctx_outline.get_top()[1]) / 2
+        meter.move_to([client.shell.get_center()[0], gap_y, 0])
 
         wire_top = Line(client.shell.get_bottom(), server.shell.get_top())
         wire_bot = Line(server.shell.get_bottom(), apis.shell.get_top())

@@ -38,14 +38,14 @@ class Scene07SmbInvisible(Scene):
         bg = make_background()
         grid = make_dot_grid()
         client = make_ai_client().move_to(UP * 1.78)
-        server = make_mcp_server().move_to(DOWN * 0.75)
-        apis = make_api_box().move_to(DOWN * 2.4)
+        server = make_mcp_server().move_to(DOWN * 0.92)
+        apis = make_api_box().move_to(DOWN * 2.52)
 
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
         cards.arrange(RIGHT, buff=0.18)
         cards.scale_to_fit_width(5.1)
-        for card, dx in zip(cards, (-1.08, 0.0, 1.08)):
-            card.scale(0.6).move_to(
+        for card, dx in zip(cards, (-1.0, 0.0, 1.0)):
+            card.scale(0.56).move_to(
                 client.llm.get_center() + DOWN * 0.1 + RIGHT * dx)
         apis.endpoints.set_opacity(0.55)
         client.ctx_fill.become(ctx_fill_target(client, 0.92))

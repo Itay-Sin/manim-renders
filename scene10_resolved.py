@@ -46,8 +46,8 @@ class Scene10Resolved(Scene):
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
         cards.arrange(RIGHT, buff=0.18)
         cards.scale_to_fit_width(5.1)
-        for card, dx in zip(cards, (-1.08, 0.0, 1.08)):
-            card.scale(0.6).move_to(
+        for card, dx in zip(cards, (-1.0, 0.0, 1.0)):
+            card.scale(0.56).move_to(
                 client.llm.get_center() + DOWN * 0.1 + RIGHT * dx)
         cg = VGroup(client, cards)
         cg.scale(0.62).move_to(UP * 2.25)

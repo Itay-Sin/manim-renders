@@ -39,14 +39,14 @@ class Scene05Knowledge(Scene):
         grid = make_dot_grid()
         strip = make_title_strip("MCP", "Where the knowledge comes from")
         client = make_ai_client().move_to(UP * 1.78)
-        server = make_mcp_server().move_to(DOWN * 0.75)
-        apis = make_api_box().move_to(DOWN * 2.4)
+        server = make_mcp_server().move_to(DOWN * 0.92)
+        apis = make_api_box().move_to(DOWN * 2.52)
 
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
         cards.arrange(RIGHT, buff=0.18)
         cards.scale_to_fit_width(5.1)
-        for card, dx in zip(cards, (-1.08, 0.0, 1.08)):
-            card.scale(0.6).move_to(
+        for card, dx in zip(cards, (-1.0, 0.0, 1.0)):
+            card.scale(0.56).move_to(
                 client.llm.get_center() + DOWN * 0.1 + RIGHT * dx)
         apis.endpoints.set_opacity(0.55)
         client.ctx_fill.become(ctx_fill_target(client, 0.55))
@@ -117,21 +117,27 @@ class Scene05Knowledge(Scene):
         cap2 = make_caption("That costs tokens.")
         self.play(FadeOut(cap), run_time=0.2)
         # The meter lives INSIDE the client card: the client pays the bill.
+        # One row — number, unit, tag — centred in the gap between the LLM
+        # box and the context bar (operator note 2026-11-07: off the title
+        # it clipped the card edge and the LLM box).
         # Text, not Integer: DecimalNumber renders through LaTeX, which this
         # machine does not have.
         meter_val = ValueTracker(0)
         meter_unit = Text("tokens", font=UI_FONT, font_size=12, color=MUTED)
-        meter_unit.next_to(client.title, RIGHT, buff=1.35,
-                           aligned_edge=DOWN)
-        # Pin the unit's right edge inside the shell: positioned off the
-        # title alone, "tokens" (and the tag below it) ran past the card's
-        # right edge (operator note 2026-11-07).
-        meter_unit.shift(LEFT * (meter_unit.get_right()[0]
-                                 - client.shell.get_right()[0] + 0.3))
+        before_tag = Text("before any work", font=UI_FONT, font_size=11,
+                          color=MUTED)
+        # Layout ghost: the row as it reads at full count fixes everyone's
+        # final spot; only unit and tag are ever added to the scene here.
+        final_num = Text("55,000", font=UI_FONT, font_size=18, color=INK)
+        meter_row = VGroup(final_num, meter_unit, before_tag)
+        meter_row.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+        gap_y = (client.llm.get_bottom()[1]
+                 + client.ctx_outline.get_top()[1]) / 2
+        meter_row.move_to([client.shell.get_center()[0], gap_y, 0])
         meter_num = always_redraw(
             lambda: Text(f"{int(meter_val.get_value()):,}", font=UI_FONT,
                          font_size=18, color=INK)
-            .next_to(meter_unit, LEFT, buff=0.1, aligned_edge=DOWN))
+            .next_to(meter_unit, LEFT, buff=0.14, aligned_edge=DOWN))
         self.play(FadeIn(cap2), FadeIn(meter_unit, shift=DOWN * 0.1),
                   run_time=0.5)
         self.add(meter_num)
@@ -148,12 +154,14 @@ class Scene05Knowledge(Scene):
         self.play(FadeOut(cap), run_time=0.2)
 
         # Four more servers stack up behind the first, slightly offset.
+        # 0.06 per step, not 0.1: at 0.1 the back ghosts rose under the AI
+        # client card (operator note 2026-11-07).
         extras = VGroup()
         for i in range(1, 5):
             ghost = server.shell.copy()
             ghost.set_fill("#FFFFFF", opacity=1.0).set_stroke(TEAL, 1.6,
                                                               opacity=0.7)
-            ghost.shift(UP * 0.1 * i + LEFT * 0.1 * i)
+            ghost.shift(UP * 0.06 * i + LEFT * 0.1 * i)
             ghost.set_z_index(-i)
             extras.add(ghost)
         # A x5 chip on the title row says "five servers" even with the sound
@@ -197,9 +205,7 @@ class Scene05Knowledge(Scene):
         )
         self.play(FadeOut(shower), Transform(client.ctx_fill, fill_b),
                   run_time=0.4)
-        before_tag = Text("before any work", font=UI_FONT, font_size=11,
-                          color=MUTED)
-        before_tag.next_to(meter_unit, DOWN, buff=0.12, aligned_edge=RIGHT)
+        # The tag was positioned with the meter row above; it just fades in.
         self.play(FadeIn(before_tag), run_time=0.3)
         # Rule-2 tail: the voice ends ~15.0 ("alone" heard 14.3). The ghost
         # servers' exit is the one short settle, starting at voice end.

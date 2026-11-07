@@ -74,9 +74,12 @@ def make_ai_client():
     shadow, shell, title = _shell(5.6, 3.0, "#D8DCE3", "AI client",
                                   title_color=INK)
 
-    llm = RoundedRectangle(corner_radius=0.14, width=3.5, height=1.3)
+    # 3.1 x 1.05, raised: narrower and shorter than the first cut so the
+    # token meter fits in the gap between the LLM box and the context bar
+    # (operator note 2026-11-07).
+    llm = RoundedRectangle(corner_radius=0.14, width=3.1, height=1.05)
     llm.set_stroke(PURPLE, 3).set_fill(PURPLE, opacity=0.07)
-    llm.move_to(shell.get_center() + UP * 0.18)
+    llm.move_to(shell.get_center() + UP * 0.30)
     llm_label = Text("LLM", font=UI_FONT, font_size=18, color=PURPLE)
     llm_label.next_to(llm.get_top(), DOWN, buff=0.08)
 

@@ -22,6 +22,12 @@ VIDS=(
   12 media-final2/videos/scene12_close/1350p30/Scene12Close.mp4
 )
 
+# Scenes whose top-right corner is busy carry no watermark: the question
+# bubble reaches it in 4/6/7/8/9, the title strip in 2/5, and scene 12's
+# closing elements cross it. Verified per-frame by scan_corner.py
+# (operator note 2026-11-07).
+NO_WM=(2 4 5 6 7 8 9 12)
+
 for n in 1 2 3 4 5 6 7 8 9 10 11 12; do
   nn=$(printf "%02d" $n)
   tsv="captions_s${nn}.tsv"
@@ -36,6 +42,12 @@ for n in 1 2 3 4 5 6 7 8 9 10 11 12; do
     filter+="${prev}[${k}:v]overlay=0:0:enable='between(t,${s},${e})'${out};"
     prev="$out"
   done < "$tsv"
+  if [[ ! " ${NO_WM[@]} " =~ " ${n} " ]]; then
+    k=$((k+1))
+    inputs+=(-i "plates/watermark.png")
+    filter+="${prev}[${k}:v]overlay=0:0[v$k];"
+    prev="[v$k]"
+  fi
   inputs+=(-i "vo_s${nn}.mp3")
   aidx=$((k+1))
   # apad + -shortest: the audio is padded with REAL silence to exactly the
