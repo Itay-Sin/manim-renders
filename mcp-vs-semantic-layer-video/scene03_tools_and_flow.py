@@ -14,7 +14,7 @@ Narration beats:
 
 from manim import *
 from common import (
-    make_ai_client, make_mcp_server, make_api_box,
+    make_ai_client, make_mcp_server, make_api_box, make_background,
     make_tool_card, make_big_tool_card, make_packet, make_data_rows,
     make_caption, make_title_strip, make_dot_grid, ctx_fill_target,
     BG, INK, MUTED, LIGHT_GREY, PURPLE, PURPLE_FILL, TEAL, GREY, SLATE,
@@ -34,11 +34,12 @@ TOOL_SPECS = [
 class Scene03ToolsAndFlow(Scene):
     def construct(self):
         # ------------------------------------------------- base layout ----
+        bg = make_background()
         grid = make_dot_grid()
         strip = make_title_strip("MCP", "Tools and the flow")
-        client = make_ai_client().move_to(UP * 1.85)
+        client = make_ai_client().move_to(UP * 1.78)
         server = make_mcp_server().move_to(DOWN * 0.75)
-        apis = make_api_box().move_to(DOWN * 2.6)
+        apis = make_api_box().move_to(DOWN * 2.4)
 
         wire_top = Line(client.shell.get_bottom(), server.shell.get_top())
         wire_bot = Line(server.shell.get_bottom(), apis.shell.get_top())
@@ -46,7 +47,7 @@ class Scene03ToolsAndFlow(Scene):
             w.set_stroke(GREY, 2.2, opacity=0.75)
 
         cap = make_caption("The server exposes your APIs as tools.")
-        self.add(grid)
+        self.add(bg, grid)
         self.play(FadeIn(strip), FadeIn(client), FadeIn(server), FadeIn(apis),
                   FadeIn(wire_top), FadeIn(wire_bot), FadeIn(cap),
                   run_time=0.6)
@@ -55,8 +56,8 @@ class Scene03ToolsAndFlow(Scene):
         # Endpoints lift UP from the API card into the server as a card row.
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
         cards.arrange(RIGHT, buff=0.18)
-        cards.scale_to_fit_width(5.3)
-        cards.move_to(server.shell.get_center() + DOWN * 0.22)
+        cards.scale_to_fit_width(5.1)
+        cards.move_to(server.shell.get_center() + DOWN * 0.18)
 
         lift_anims = []
         ghosts = VGroup()
@@ -99,13 +100,13 @@ class Scene03ToolsAndFlow(Scene):
 
         # ----------- beat 3: cards go UP to the LLM (8-11 s) --------------
         minis = cards  # same objects, shrunk into a row inside the LLM box
-        anchor = client.llm.get_center() + DOWN * 0.15
-        targets = [anchor + RIGHT * dx for dx in (-1.13, 0.0, 1.13)]
+        anchor = client.llm.get_center() + DOWN * 0.1
+        targets = [anchor + RIGHT * dx for dx in (-1.08, 0.0, 1.08)]
         cap2 = make_caption("The client hands those to the LLM...")
         self.play(FadeOut(cap), run_time=0.25)
         self.play(
             LaggedStart(*[
-                card.animate.scale(0.61).move_to(pos)
+                card.animate.scale(0.6).move_to(pos)
                 for card, pos in zip(minis, targets)
             ], lag_ratio=0.2),
             FadeIn(cap2),

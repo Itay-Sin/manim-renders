@@ -56,23 +56,33 @@ def _shell(width, height, color, label, label_size=26, title_color=None):
     return shadow, box, tag
 
 
+def make_background():
+    """Soft vertical gradient page behind everything, so the white cards pop
+    instead of sitting white-on-white."""
+    r = Rectangle(width=8, height=10)
+    r.set_stroke(width=0)
+    r.set_fill(color=["#ECEFF5", "#F9FAFC", "#EAEDF4"], opacity=1.0)
+    r.set_sheen_direction(DOWN)
+    return r
+
+
 def make_ai_client():
     """AI client shell with .llm (purple box), .ctx_outline and .ctx_fill.
 
     Sized for the stacked 4:5 layout: wide and short, LLM row on top,
     context window bar beneath it."""
-    shadow, shell, title = _shell(5.8, 3.1, "#D8DCE3", "AI client",
+    shadow, shell, title = _shell(5.6, 2.85, "#D8DCE3", "AI client",
                                   title_color=INK)
 
-    llm = RoundedRectangle(corner_radius=0.14, width=3.6, height=1.35)
+    llm = RoundedRectangle(corner_radius=0.14, width=3.5, height=1.3)
     llm.set_stroke(PURPLE, 3).set_fill(PURPLE, opacity=0.07)
-    llm.move_to(shell.get_center() + UP * 0.3)
+    llm.move_to(shell.get_center() + UP * 0.28)
     llm_label = Text("LLM", font=UI_FONT, font_size=18, color=PURPLE)
     llm_label.next_to(llm.get_top(), DOWN, buff=0.08)
 
     ctx_outline = Rectangle(width=4.6, height=0.42)
     ctx_outline.set_stroke(PURPLE, 2)
-    ctx_outline.move_to(shell.get_center() + DOWN * 0.95)
+    ctx_outline.move_to(shell.get_center() + DOWN * 0.88)
     ctx_fill = Rectangle(width=0.001, height=0.32)
     ctx_fill.set_stroke(width=0).set_fill(PURPLE_FILL, 0.9)
     ctx_fill.move_to(ctx_outline.get_left() + RIGHT * 0.05)
@@ -97,7 +107,7 @@ def ctx_fill_target(client, frac):
 
 
 def make_mcp_server():
-    shadow, shell, title = _shell(5.8, 1.9, TEAL, "MCP server")
+    shadow, shell, title = _shell(5.6, 1.6, TEAL, "MCP server")
     g = VGroup(shadow, shell, title)
     g.shell, g.title = shell, title
     return g
@@ -105,14 +115,16 @@ def make_mcp_server():
 
 def make_api_box():
     """'your APIs' card with .endpoints (VGroup of three labels)."""
-    shadow, shell, title = _shell(5.8, 1.45, "#D8DCE3", "your APIs",
-                                  title_color=INK, label_size=22)
+    shadow, shell, title = _shell(5.6, 1.15, "#D8DCE3", "your APIs",
+                                  title_color=INK, label_size=20)
     endpoints = VGroup(*[
-        Text(t, font=CODE_FONT, font_size=15, color=SLATE)
+        Text(t, font=CODE_FONT, font_size=14, color=SLATE)
         for t in ["GET /opportunities", "GET /accounts", "POST /deals"]
     ])
-    endpoints.arrange(DOWN, buff=0.13, aligned_edge=LEFT)
-    endpoints.move_to(shell.get_center() + DOWN * 0.17)
+    endpoints.arrange(RIGHT, buff=0.32)
+    if endpoints.width > 5.2:
+        endpoints.scale_to_fit_width(5.2)
+    endpoints.move_to(shell.get_center() + DOWN * 0.22)
     g = VGroup(shadow, shell, title, endpoints)
     g.shell, g.title, g.endpoints = shell, title, endpoints
     return g
@@ -182,12 +194,17 @@ def make_data_rows(n=3, width=1.4):
 
 
 def make_caption(text):
-    """Burned-in caption for sound-off viewing (LinkedIn), bottom centre."""
-    t = Text(text, font=UI_FONT, font_size=26, color=INK)
-    if t.width > 6.0:
-        t.scale_to_fit_width(6.0)
-    t.to_edge(DOWN, buff=0.14)
-    return t
+    """Burned-in caption on its own footer plate, so subtitles have a home."""
+    t = Text(text, font=UI_FONT, font_size=25, color=INK)
+    if t.width > 5.5:
+        t.scale_to_fit_width(5.5)
+    plate = RoundedRectangle(corner_radius=0.19,
+                             width=t.width + 0.5, height=0.6)
+    plate.set_stroke(width=0).set_fill("#FFFFFF", opacity=0.9)
+    t.move_to(plate.get_center())
+    g = VGroup(plate, t)
+    g.to_edge(DOWN, buff=0.18)
+    return g
 
 
 def make_title_strip(kicker, title):
