@@ -235,6 +235,37 @@ def make_dot_grid():
     return dots
 
 
+def make_bubble(text, width=None, font_size=17):
+    """Speech bubble: white rounded card with a tail, for the user's question."""
+    t = Text(text, font=UI_FONT, font_size=font_size, color=INK)
+    w = width or (t.width + 0.6)
+    if t.width > w - 0.5:
+        t.scale_to_fit_width(w - 0.5)
+    body = RoundedRectangle(corner_radius=0.22, width=w, height=t.height + 0.5)
+    body.set_stroke("#D8DCE3", 2).set_fill("#FFFFFF", opacity=1.0)
+    tail = Polygon([-0.14, 0, 0], [0.14, 0, 0], [0, -0.22, 0])
+    tail.set_stroke("#D8DCE3", 2).set_fill("#FFFFFF", opacity=1.0)
+    tail.move_to(body.get_bottom() + LEFT * (w / 2 - 0.55) + DOWN * 0.1)
+    shadow = make_shadow(body)
+    t.move_to(body.get_center())
+    g = VGroup(shadow, tail, body, t)
+    g.body, g.text = body, t
+    return g
+
+
+def make_chip(label, color, fill):
+    """Big concept chip (scene 1): tinted rounded card with bold colored text."""
+    t = Text(label, font=UI_FONT, font_size=30, color=color, weight=BOLD)
+    card = RoundedRectangle(corner_radius=0.24,
+                            width=t.width + 0.7, height=t.height + 0.55)
+    card.set_stroke(color, 2.5).set_fill(fill, opacity=1.0)
+    shadow = make_shadow(card)
+    t.move_to(card.get_center())
+    g = VGroup(shadow, card, t)
+    g.card, g.text = card, t
+    return g
+
+
 def make_token_meter():
     """Top-right token counter; .num is the Integer to animate."""
     num = Integer(0, font_size=30, color=INK)
