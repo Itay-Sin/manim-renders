@@ -69,6 +69,9 @@ class Scene07SmbInvisible(Scene):
         big = make_big_tool_card(*TOOL_SPECS[0]).move_to(UP * 0.55)
         cap = make_caption("SMB isn't in the tool or the schema.")
         self.play(FadeIn(big, shift=UP * 0.15), FadeIn(cap), run_time=0.6)
+        # The row scan is "isn't in the tool..." ("isn't" heard at 1.23);
+        # without this hold the first spotlight led the word by 0.33 s.
+        self.wait(0.15)
 
         # A spotlight sweeps each row; nothing matches, a red X per row.
         xs = VGroup()
@@ -83,7 +86,7 @@ class Scene07SmbInvisible(Scene):
             xs.add(x)
             self.play(Create(hl), run_time=0.2)
             self.play(FadeIn(x, scale=0.6), FadeOut(hl), run_time=0.35)
-        self.wait(0.3)
+        self.wait(0.15)
 
         # ------ beat 2: the candidate fields (3.1-7.4 s) ------------------
         opp = make_object_card("Opportunity", ["amount", "status"])
@@ -102,7 +105,8 @@ class Scene07SmbInvisible(Scene):
 
         self.play(Indicate(opp.fields["amount"], color=AMBER,
                            scale_factor=1.3), run_time=0.7)
-        self.wait(0.9)
+        # "segment" is heard at 6.12; the old 0.9 s wait pulsed it at 5.35.
+        self.wait(1.45)
         self.play(Indicate(acc.fields["segment"], color=AMBER,
                            scale_factor=1.3), run_time=0.7)
         self.play(Indicate(acc.fields["employees"], color=AMBER,
@@ -155,8 +159,10 @@ class Scene07SmbInvisible(Scene):
         badge.set_stroke(PURPLE, 2).set_fill("#FFFFFF", opacity=0.95)
         q_g = VGroup(badge, q.move_to(badge.get_center()))
         q_g.move_to(UP * 2.1)
+        # The badge answers "can't know which" ("can't" heard at 10.51).
+        self.wait(0.35)
         self.play(FadeIn(q_g, scale=0.5), run_time=0.5)
         self.wait(1.4)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.8)
+        self.wait(1.5)

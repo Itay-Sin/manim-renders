@@ -35,6 +35,7 @@ class Scene02WhatIsMCP(Scene):
         grid = make_dot_grid()
         strip = make_title_strip("MCP", "One port, any client")
         self.add(bg, grid)
+        self.wait(0.3)  # house style: breath before the first play
 
         # The MCP server, lower middle, with a USB-C-like socket on top.
         shell = RoundedRectangle(corner_radius=0.18, width=5.6, height=1.7)
@@ -51,12 +52,14 @@ class Scene02WhatIsMCP(Scene):
         cap = make_caption("MCP is like a USB-C port for AI.")
         self.play(FadeIn(strip), FadeIn(server), FadeIn(cap), run_time=0.8)
 
-        # On "USB-C port", the socket pulses once. The words land ~3.9-4.5 s
-        # into the scene (srt + 0.5), so the pulse waits for them.
+        # On "USB-C port", the socket pulses once. The words land ~3.4-4.7 s
+        # into the scene (word table + 0.5 s mux delay); with the 0.3 s
+        # opening wait the pulse runs 3.7-4.5 s, right on "port".
         self.wait(2.6)
         self.play(Indicate(port, color=TEAL, scale_factor=1.35), run_time=0.8)
-        # Holds are sized so the scene runs just past its 12.6 s narration.
-        self.wait(0.6)
+        # Voice sync: the client row must not lead "any compatible AI client"
+        # (heard ~8.0-9.4 s), so the hold stretches to put the row at 7.9 s.
+        self.wait(3.2)
 
         # Three AI clients appear in a row above.
         clients = VGroup(small_client("Claude"),
@@ -73,6 +76,10 @@ class Scene02WhatIsMCP(Scene):
         cap = cap2
 
         # Each client extends a cable into the same port, with a click flash.
+        # Voice sync: cable 1 lands on "like Claude" (~10.1-10.6 s heard),
+        # cable 2 on "or ChatGPT" (~10.7-11.3 s), cable 3 on "can connect"
+        # (~12.0-12.7 s) - one 1.0 s create+flash per name.
+        self.wait(0.7)
         plug_point = port.get_top() + UP * 0.02
         cables = VGroup()
         for c in clients:
@@ -86,7 +93,7 @@ class Scene02WhatIsMCP(Scene):
             self.play(Flash(port, color=TEAL, line_length=0.14, num_lines=8),
                       run_time=0.2)
 
-        self.wait(1.6)
+        self.wait(0.4)
 
         # Two clients leave; one stays: the base layout for the next scenes.
         keeper = clients[2]
@@ -103,4 +110,6 @@ class Scene02WhatIsMCP(Scene):
                   ReplacementTransform(cables[2], wire), run_time=0.8)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.6)
+        # Audio (12.58 s mp3 + 0.5 s mux delay) ends ~13.1 s; the leave +
+        # straighten transition and this hold leave a ~2.5 s visual tail.
+        self.wait(0.8)

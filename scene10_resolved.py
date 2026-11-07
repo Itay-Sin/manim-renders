@@ -139,6 +139,9 @@ class Scene10Resolved(Scene):
         fact_pkt = RoundedRectangle(corner_radius=0.1, width=0.5, height=0.24)
         fact_pkt.set_stroke(width=0).set_fill(AMBER, 1.0)
         fact_pkt.move_to(stack.cards.get_top() + UP * 0.1)
+        # Word-level sync: the fact travels back on "and gets back"
+        # (heard 6.3 s), not straight after the flip.
+        self.wait(0.5)
         self.play(FadeIn(fact_pkt, scale=0.5), run_time=0.2)
         back = VMobject().set_points_smoothly([
             fact_pkt.get_center(),
@@ -156,10 +159,13 @@ class Scene10Resolved(Scene):
                   run_time=0.3)
         # The unknown word is unknown no more. The amber ring mirrors the red
         # ring of scene 6: the payoff rhymes with the break.
+        # Word-level sync: the ring fires as "SMB is a value of segment"
+        # starts (heard 8.3 s).
+        self.wait(0.3)
         self.play(bubble.text[12:15].animate.set_color(AMBER),
                   Circumscribe(bubble.text[12:15], color=AMBER, buff=0.08),
                   run_time=0.8)
-        self.wait(2.8)
+        self.wait(2.0)
 
         # ------ beat 3: a short request, job ends (11.3-14.6 s) -----------
         cap2 = make_caption("A short request back. The LLM's job ends.")
@@ -228,6 +234,10 @@ class Scene10Resolved(Scene):
             compiler.box.get_bottom() + DOWN * 0.68 + LEFT * 0.3,
         ]
         self.play(FadeIn(blocks, lag_ratio=0.15, scale=0.6), run_time=0.3)
+        # Word-level sync: the blocks travel on "picks up the building
+        # blocks" (heard 16.6 s); the 0.5 s is paid back from the two SQL
+        # holds below so "Nothing guessed" stays on its word.
+        self.wait(0.5)
         self.play(
             LaggedStart(*[
                 b.animate.move_to(t) for b, t in zip(blocks, targets)
@@ -256,12 +266,12 @@ class Scene10Resolved(Scene):
         if overshoot > 0:
             sql.shift(LEFT * overshoot)
         self.play(FadeTransform(blocks, sql), run_time=0.7)
-        self.wait(0.5)
+        self.wait(0.2)
         lock = make_lock(0.8)
         lock.move_to(sql_card.get_corner(UR))
         self.play(FadeIn(lock, scale=0.5), run_time=0.4)
         # The SQL card is the proof: it holds long enough to register.
-        self.wait(0.4)
+        self.wait(0.2)
 
         # It runs: down to the systems, rows back up to the client.
         sql_pkt = RoundedRectangle(corner_radius=0.1, width=0.55, height=0.24)

@@ -117,6 +117,9 @@ class Scene08TwoBadOptions(Scene):
         # other on fanned arcs: all eight flying at once crossed each other
         # as overlapping text.
         self.play(FadeIn(chips, lag_ratio=0.08), run_time=0.3)
+        # The chips appear on "every field and value" and fly on "in the
+        # tool descriptions" ("in" heard at 4.03): hold between the two.
+        self.wait(0.95)
         self.play(
             LaggedStart(*[
                 c.animate(path_arc=-0.45).scale(0.4)
@@ -133,7 +136,9 @@ class Scene08TwoBadOptions(Scene):
         spill.move_to(bar_out.get_left() + RIGHT * (0.05 + 1.075))
         self.play(Transform(bar_fill, spill), run_time=0.6)
         self.play(bar_out.animate.set_stroke(ALERT_RED, 2.5), run_time=0.3)
-        self.wait(1.4)
+        # Shorter than it was: option 2's caption belongs on "Or" (heard
+        # 7.24) and the chip-fly hold above already spent the slack.
+        self.wait(0.75)
 
         # ------------- beat 3, option 2: explore and guess (7.1-10.6) -----
         cap2 = make_caption("Or the LLM explores, and it's still guessing.")
@@ -163,12 +168,14 @@ class Scene08TwoBadOptions(Scene):
             lab.move_to(pill.get_center())
             pkt = VGroup(pill, lab)
             pkt.move_to(llm_g.get_right() + RIGHT * 0.2)
-            self.play(FadeIn(pkt, scale=0.6), run_time=0.15)
+            # Quicker probes than the first cut: the guessed join has to be
+            # on screen by "write the query itself" ("write" heard at 9.09).
+            self.play(FadeIn(pkt, scale=0.6), run_time=0.10)
             self.play(pkt.animate.next_to(data_g, LEFT, buff=0.1),
-                      run_time=0.35)
+                      run_time=0.25)
             self.play(pkt.animate.move_to(llm_g.get_right() + RIGHT * 0.2)
-                      .scale(0.7), run_time=0.3)
-            self.play(FadeOut(pkt, scale=0.3), run_time=0.15)
+                      .scale(0.7), run_time=0.20)
+            self.play(FadeOut(pkt, scale=0.3), run_time=0.10)
 
         # Then it writes the query itself: a guessed join, dashed and wobbly.
         q_opp = Text("Opportunity", font=UI_FONT, font_size=13, color=INK)
@@ -188,6 +195,8 @@ class Scene08TwoBadOptions(Scene):
                      weight=BOLD)
         qmark.move_to(p2.box.get_center() + DOWN * 0.45)
         self.play(FadeIn(q_opp), FadeIn(q_acc), run_time=0.3)
+        # The wobbly join is "and it's still guessing" ("and" heard 10.44).
+        self.wait(0.55)
         self.play(Create(wobbly), FadeIn(qmark, scale=0.6), run_time=0.6)
 
         # ------------- both are dead ends ---------------------------------

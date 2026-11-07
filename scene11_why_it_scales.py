@@ -54,6 +54,9 @@ class Scene11WhyItScales(Scene):
             c.move_to(RIGHT * (1.95 + 0.05 * (i % 3))
                       + DOWN * 2.0 + UP * i * 0.48)
             tall.add(c)
+        # Word-level sync: the growth finishes as "it can be huge" lands
+        # (heard 3.6-3.9 s) instead of a second before it.
+        self.wait(0.5)
         self.play(
             LaggedStart(*[FadeIn(c, shift=UP * 0.15) for c in tall],
                         lag_ratio=0.12),
@@ -64,7 +67,7 @@ class Scene11WhyItScales(Scene):
         big_tag.rotate(PI / 2)
         big_tag.next_to(tall, RIGHT, buff=0.14)
         self.play(FadeIn(big_tag), run_time=0.4)
-        self.wait(1.5)
+        self.wait(1.0)
 
         # ------ beat 2: you only pay for the exchange (4.7-9.7 s) ---------
         cap2 = make_caption("You only pay for the short exchange.")

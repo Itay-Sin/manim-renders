@@ -117,10 +117,13 @@ class Scene12Close(Scene):
         self.play(FadeIn(pkt, scale=0.5), run_time=0.2)
         self.play(pkt.animate.move_to(systems.get_top() + UP * 0.05),
                   run_time=0.7)
+        # Word-level sync: the strike lands on "and acts on them"
+        # (heard 4.3 s).
+        self.wait(0.3)
         self.play(FadeOut(pkt, scale=0.4),
                   systems.animate.set_stroke(TEAL, 4), run_time=0.25)
         self.play(systems.animate.set_stroke(GREY, 2.5), run_time=0.25)
-        self.wait(0.8)
+        self.wait(0.5)
 
         # ------ beat 3: the layer understands (5.3-7.3 s) -----------------
         cap2 = make_caption("The semantic layer understands your data.")
@@ -178,9 +181,13 @@ class Scene12Close(Scene):
                   run_time=0.7)
         # Circumscribe, not Indicate: Indicate flooded the file-card icon
         # solid dark amber mid-flash.
+        # Word-level sync: the ring answers "need the semantic layer"
+        # (heard 11.8 s), so the question sits on the card through
+        # "business's own words" first.
+        self.wait(0.9)
         self.play(Circumscribe(sem.icon, color=AMBER, buff=0.08),
                   FadeOut(q_g), run_time=0.6)
-        self.wait(1.5)
+        self.wait(0.6)
 
         # ------ beat 6: sometimes both (13-17 s) --------------------------
         cap2 = make_caption("Sometimes both: the layer finds, MCP acts.")
@@ -202,6 +209,9 @@ class Scene12Close(Scene):
         finder = RoundedRectangle(corner_radius=0.08, width=0.4, height=0.18)
         finder.set_stroke(width=0).set_fill(AMBER, 1.0)
         finder.move_to(sem.box.get_bottom() + DOWN * 0.1)
+        # Word-level sync: the finder sets off on "the layer finds the
+        # records" (heard 14.7 s), not during "you need both".
+        self.wait(0.9)
         # Fade in before moving, so the pill doesn't pop in a single frame.
         self.play(Succession(
             FadeIn(finder, scale=0.5, run_time=0.2),
@@ -214,6 +224,9 @@ class Scene12Close(Scene):
         actor = RoundedRectangle(corner_radius=0.08, width=0.4, height=0.18)
         actor.set_stroke(width=0).set_fill(TEAL, 1.0)
         actor.move_to(mcp.box.get_bottom() + DOWN * 0.1)
+        # Word-level sync: the actor sets off on "and an MCP tool acts"
+        # (heard 16.7 s), not while the records are still being named.
+        self.wait(0.8)
         # Fades in before moving, and parks above the ring: at UP*0.2 it
         # landed on the ring's border.
         self.play(Succession(
@@ -225,7 +238,7 @@ class Scene12Close(Scene):
                   rows.animate.set_fill(TEAL, 0.8), run_time=0.4)
         self.play(rows.animate.set_fill(SLATE, 0.5),
                   ring.animate.set_stroke(OK_GREEN, 2.5), run_time=0.4)
-        self.wait(0.6)
+        self.wait(0.3)
 
         # ------ final: two different tools --------------------------------
         # The caption swaps too: holding "sometimes both" under a "two
@@ -242,4 +255,4 @@ class Scene12Close(Scene):
                   run_time=0.5)
 
         # ------------------------------------------------- final hold ----
-        self.wait(2.6)
+        self.wait(1.9)

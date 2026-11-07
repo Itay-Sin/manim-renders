@@ -59,6 +59,10 @@ class Scene04EasyQuestion(Scene):
 
         self.add(bg, grid, wire_top, wire_bot,
                  client, server, apis, cards)
+        # House style breath, and voice sync: "Here's an easy question" is
+        # heard at ~0.6 s (word table + 0.5 s mux delay); starting the fade
+        # at 0 made the visuals lead the narration for the whole scene.
+        self.wait(0.3)
 
         # ------------- beat 1: the question arrives (0-4 s) ---------------
         # The bubble IS this scene's header: it owns the top zone where other
@@ -70,7 +74,9 @@ class Scene04EasyQuestion(Scene):
         bubble.scale(0.9).move_to(UP * 3.38)  # clear air above, like the strip
         cap = make_caption("An easy question: show me my open opportunities.")
         self.play(FadeIn(bubble, shift=DOWN * 0.2), FadeIn(cap), run_time=0.8)
-        self.wait(1.6)
+        # Voice sync: "The tool lists open..." is heard at ~3.7 s, so the
+        # schema panel waits for it instead of arriving at 3.0 s.
+        self.wait(1.8)
 
         # ----- beat 2: "open" is a declared value of the tool (4-8 s) -----
         dim = Rectangle(width=8, height=10)
@@ -127,7 +133,8 @@ class Scene04EasyQuestion(Scene):
         self.play(FadeIn(check, scale=0.5),
                   Indicate(v_open_box, color=OK_GREEN, scale_factor=1.1),
                   run_time=0.6)
-        self.wait(0.2)
+        # No wait: "so the LLM just asks for it" is heard at ~6.1 s and the
+        # caption swap below needs to land on it.
 
         # --------- beat 3: so the LLM just asks for it (8-10 s) -----------
         cap2 = make_caption("So the LLM just asks for it.")
@@ -146,19 +153,22 @@ class Scene04EasyQuestion(Scene):
             server.shell.get_center() + UP * 0.05,
         ])
         self.play(MoveAlongPath(pkt, p1), run_time=0.6)
-        self.play(server.shell.animate.set_stroke(TEAL, 6), run_time=0.2)
-        self.play(server.shell.animate.set_stroke(TEAL, 2.5), run_time=0.2)
+        # The round trip below is tightened (0.2 -> 0.15 s flashes, 0.4 ->
+        # 0.3 s hops) so the closing caption can land nearer "It can only
+        # ask..." (heard ~8.2 s).
+        self.play(server.shell.animate.set_stroke(TEAL, 6), run_time=0.15)
+        self.play(server.shell.animate.set_stroke(TEAL, 2.5), run_time=0.15)
         p2 = VMobject().set_points_smoothly([
             pkt.get_center(),
             [apis.endpoints[0].get_x(), apis.shell.get_top()[1] + 0.08, 0],
             apis.endpoints[0].get_center(),
         ])
-        self.play(MoveAlongPath(pkt, p2), run_time=0.4)
+        self.play(MoveAlongPath(pkt, p2), run_time=0.3)
         self.play(FadeOut(pkt, scale=0.4),
                   apis.endpoints[0].animate.set_opacity(1.0).set_color(TEAL),
-                  run_time=0.2)
+                  run_time=0.15)
         self.play(apis.endpoints[0].animate.set_opacity(0.55).set_color(SLATE),
-                  run_time=0.2)
+                  run_time=0.15)
 
         moving = make_data_rows(3)
         for bar in moving:
@@ -168,11 +178,11 @@ class Scene04EasyQuestion(Scene):
                 m.animate.move_to(client.ctx_outline.get_center())
                 for m in moving
             ], lag_ratio=0.18),
-            run_time=0.6,
+            run_time=0.45,
         )
         fill2 = ctx_fill_target(client, 0.55)
         self.play(FadeOut(moving), Transform(client.ctx_fill, fill2),
-                  run_time=0.4)
+                  run_time=0.3)
 
         # ------ beat 4: only what the tool spells out (10-12 s) -----------
         cap2 = make_caption("It can only ask for what the tool spells out.")
@@ -193,4 +203,6 @@ class Scene04EasyQuestion(Scene):
         self.play(FadeOut(shade), FadeOut(ring), run_time=0.4)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.0)
+        # Audio (9.94 s mp3 + 0.5 s mux delay) ends ~10.4 s; this leaves a
+        # ~1.1 s tail, above the 0.9 s minimum.
+        self.wait(1.2)

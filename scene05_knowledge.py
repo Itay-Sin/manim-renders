@@ -90,6 +90,9 @@ class Scene05Knowledge(Scene):
             .move_to(c.get_center()) for c in cards
         ])
         fill_a = ctx_fill_target(client, 0.62)
+        # Word-level sync: the fly belongs to "comes from those descriptions"
+        # ("comes" heard at 3.78), so hold after the caption before moving.
+        self.wait(1.05)
         # Fade the chunks in before they fly, so they don't pop in one frame.
         self.play(FadeIn(chunks, lag_ratio=0.15, scale=0.6), run_time=0.25)
         self.play(
@@ -99,9 +102,12 @@ class Scene05Knowledge(Scene):
             ], lag_ratio=0.25),
             run_time=1.15,
         )
+        # The merge into the bar is "sit in its context window" ("sit" heard
+        # at 5.85); let the chunks rest at the bar edge until then.
+        self.wait(1.1)
         self.play(FadeOut(chunks), Transform(client.ctx_fill, fill_a),
                   run_time=0.4)
-        self.wait(3.4)
+        self.wait(1.4)
 
         # --------------------- beat 3: that costs tokens (7.7-9) ----------
         cap2 = make_caption("That costs tokens.")
@@ -121,7 +127,9 @@ class Scene05Knowledge(Scene):
                   run_time=0.5)
         self.add(meter_num)
         cap = cap2
-        self.wait(0.6)
+        # Beat 4's caption and ghost servers belong to "five servers" (heard
+        # 10.72), not to the sentence's preamble "In one Anthropic example".
+        self.wait(2.0)
 
         # ------ beat 4: five servers, 55k tokens (9.1-14.5) ---------------
         cap2 = make_caption("Five servers: ~55,000 tokens before any work.")
@@ -181,10 +189,10 @@ class Scene05Knowledge(Scene):
                           color=MUTED)
         before_tag.next_to(meter_unit, DOWN, buff=0.08, aligned_edge=RIGHT)
         self.play(FadeIn(before_tag), run_time=0.3)
-        self.wait(1.5)
+        self.wait(1.0)
 
         # The extra servers leave; the cost stays.
         self.play(FadeOut(extras), FadeOut(x5), run_time=0.8)
 
         # ------------------------------------------------- final hold ----
-        self.wait(1.6)
+        self.wait(1.2)

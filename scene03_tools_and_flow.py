@@ -48,6 +48,7 @@ class Scene03ToolsAndFlow(Scene):
 
         cap = make_caption("The server exposes your APIs as tools.")
         self.add(bg, grid)
+        self.wait(0.3)  # house style: breath before the first play
         self.play(FadeIn(strip), FadeIn(client), FadeIn(server), FadeIn(apis),
                   FadeIn(wire_top), FadeIn(wire_bot), FadeIn(cap),
                   run_time=0.6)
@@ -78,11 +79,17 @@ class Scene03ToolsAndFlow(Scene):
         cap2 = make_caption("Each tool has a name, a description, and an input schema.")
         # Captions swap sequentially: cross-fading in place leaves two texts
         # stacked and unreadable for the whole play.
+        # Voice sync: "Each tool has..." is heard at ~3.4 s (word table +
+        # 0.5 s mux delay), so the swap waits for the lift to settle.
+        self.wait(0.3)
         self.play(FadeOut(cap), run_time=0.2)
         self.play(FadeIn(dim), FadeTransform(cards[0].copy(), big),
                   FadeIn(cap2), run_time=0.6)
         cap = cap2
 
+        # Voice sync: name / description / schema are heard at ~4.1 / 4.9 /
+        # 5.7 s, one 0.8 s highlight cycle each.
+        self.wait(0.1)
         for row in big.rows:
             hl = SurroundingRectangle(row, buff=0.1, corner_radius=0.08)
             hl.set_stroke(TEAL, 2)
@@ -138,8 +145,8 @@ class Scene03ToolsAndFlow(Scene):
         sweep.set_stroke(width=0).set_fill(PURPLE, 0.25)
         sweep.move_to(minis[0])
         self.play(FadeIn(sweep, run_time=0.2))
-        self.play(sweep.animate.move_to(minis[2]), run_time=0.6)
-        self.play(sweep.animate.move_to(minis[0]), run_time=0.4)
+        self.play(sweep.animate.move_to(minis[2]), run_time=0.5)
+        self.play(sweep.animate.move_to(minis[0]), run_time=0.3)
 
         # A scale pop, not a shift: shifting would ram neighbours or labels.
         self.play(FadeOut(sweep, run_time=0.2),
@@ -213,4 +220,7 @@ class Scene03ToolsAndFlow(Scene):
                   run_time=0.4)
 
         # ------------------------------------------------- final hold ----
-        self.wait(0.4)
+        # Audio (13.44 s mp3 + 0.5 s mux delay) ends ~13.9 s; the return
+        # journey of the data rows carries the visual tail, so the hold is
+        # short to keep the scene under the 16.9 s ceiling.
+        self.wait(0.2)

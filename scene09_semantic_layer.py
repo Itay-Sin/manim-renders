@@ -63,7 +63,7 @@ class Scene09SemanticLayer(Scene):
 
         # ------ beat 1: the gap gets filled (0.5-3 s) ---------------------
         cap = make_caption("That gap is what a semantic layer fills.")
-        self.play(FadeOut(shade), FadeOut(bubble), FadeIn(cap), run_time=0.7)
+        self.play(FadeOut(shade), FadeOut(bubble), FadeIn(cap), run_time=0.6)
 
         # The actors make room: everything compacts, and the context window
         # resets for the fresh approach.
@@ -73,7 +73,7 @@ class Scene09SemanticLayer(Scene):
             server.animate.scale(0.65).move_to(UP * 0.6),
             apis.animate.scale(0.7).move_to(DOWN * 2.82),
             FadeOut(wire_top), FadeOut(wire_bot),
-            run_time=1.0,
+            run_time=0.9,
         )
         self.play(Transform(client.ctx_fill, ctx_fill_target(client, 0.08)),
                   run_time=0.3)
@@ -95,13 +95,16 @@ class Scene09SemanticLayer(Scene):
 
         stack = make_sem_stack(4)
         stack.move_to(zone.shell.get_center() + LEFT * 1.7 + DOWN * 0.08)
+        # Word-level sync: hold until "a semantic model" (heard 3.9 s) before
+        # the stack builds.
+        self.wait(0.4)
         self.play(
             LaggedStart(*[FadeIn(c, shift=UP * 0.12, scale=0.8)
                           for c in stack.cards], lag_ratio=0.25),
             run_time=1.4,
         )
         self.play(FadeIn(stack.label), run_time=0.3)
-        self.wait(2.4)
+        self.wait(2.2)
 
         # ------ beat 3: objects, relations, words (7.8-11.1 s) ------------
         cap2 = make_caption("The objects, how they relate, your words.")
@@ -115,6 +118,9 @@ class Scene09SemanticLayer(Scene):
         rel = Line(opp.card.get_right(), acc.card.get_left())
         rel.set_stroke(AMBER, 2.5)
         self.play(FadeIn(opp), FadeIn(acc), FadeIn(cap2), run_time=0.6)
+        # Word-level sync: the relation line draws on "how they relate"
+        # (heard 9.0 s), not right after the cards.
+        self.wait(0.5)
         self.play(Create(rel), run_time=0.4)
 
         tag_open = Text("“open”", font=UI_FONT, font_size=12,
@@ -123,9 +129,12 @@ class Scene09SemanticLayer(Scene):
                        color=AMBER)
         tag_open.next_to(opp, DOWN, buff=0.1)
         tag_smb.next_to(acc, DOWN, buff=0.1)
+        # Word-level sync: the word tags land on "and what your words mean"
+        # (heard 10.0 s).
+        self.wait(0.6)
         self.play(FadeIn(tag_open, shift=UP * 0.08),
                   FadeIn(tag_smb, shift=UP * 0.08), run_time=0.5)
-        self.wait(1.8)
+        self.wait(0.6)
 
         # ------ beat 4: pure knowledge (11.2 s) ---------------------------
         cap2 = make_caption("Pure knowledge.")
