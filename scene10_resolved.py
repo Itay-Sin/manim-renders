@@ -69,14 +69,18 @@ class Scene10Resolved(Scene):
         acc = make_object_card("Account", ["segment"], width=1.6).scale(0.8)
         opp.move_to(zone.shell.get_center() + RIGHT * 0.55 + UP * 0.08)
         acc.move_to(zone.shell.get_center() + RIGHT * 2.05 + UP * 0.08)
-        rel = Line(opp.card.get_right(), acc.card.get_left())
-        rel.set_stroke(AMBER, 2.5)
         tag_open = Text("“open”", font=UI_FONT, font_size=12,
                         color=AMBER)
         tag_smb = Text("“SMB”", font=UI_FONT, font_size=12,
                        color=AMBER)
         tag_open.next_to(opp, DOWN, buff=0.1)
         tag_smb.next_to(acc, DOWN, buff=0.1)
+        # Centre the object half on the model half, exactly as scene 9
+        # leaves it (operator note 2026-11-07).
+        objs = VGroup(opp, acc, tag_open, tag_smb)
+        objs.shift(UP * (stack.get_center()[1] - objs.get_center()[1]))
+        rel = Line(opp.card.get_right(), acc.card.get_left())
+        rel.set_stroke(AMBER, 2.5)
 
         # Packets and data rows travel the full column; keep the card titles
         # and labels above them so nothing drives over text.

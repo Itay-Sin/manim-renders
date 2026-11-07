@@ -138,6 +138,12 @@ class Scene12Close(Scene):
         sem_role = Text("understands your data", font=UI_FONT, font_size=14,
                         color=AMBER)
         sem_role.next_to(sem, DOWN, buff=0.14)
+        # Baseline-align with the MCP card's role: next_to lines up bbox
+        # tops, and "understands" carries taller ascenders than "acts", so
+        # the two lines sat at different heights (operator note 2026-11-07).
+        # Glyph [0] of each — a, u — sits on the baseline.
+        sem_role.shift(UP * (mcp_role[0].get_bottom()[1]
+                             - sem_role[0].get_bottom()[1]))
         sem_role.set_z_index(1)
         self.play(FadeIn(cap2), FadeIn(sem_role, shift=UP * 0.08),
                   sem.box.animate(rate_func=there_and_back)
@@ -218,7 +224,18 @@ class Scene12Close(Scene):
             for _ in range(3)
         ])
         rows.arrange(DOWN, buff=0.16)
-        rows.move_to(DOWN * 0.45)
+        # Centred between the WIRES, not on the frame: the cards' drop
+        # shadows pull both wire anchors ~0.045 left of the midline, so at
+        # frame-x 0 the ring sat visibly nearer the left wire (measured
+        # 35 px vs 20 px; operator note 2026-11-07).
+        row_y = -0.45
+
+        def wire_x(w, y):
+            a, b = w.get_start(), w.get_end()
+            return a[0] + (y - a[1]) / (b[1] - a[1]) * (b[0] - a[0])
+
+        rows.move_to([(wire_x(wire_m, row_y) + wire_x(wire_s, row_y)) / 2,
+                      row_y, 0])
         self.play(FadeIn(rows), FadeIn(cap2), run_time=0.5)
 
         # The layer finds the records...

@@ -54,6 +54,11 @@ class Scene06TheTurn(Scene):
                           color=MUTED)
         meter = VGroup(meter_num, meter_unit, before_tag)
         meter.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+        # Baseline-aligned exactly as scene 5 builds it: glyph [0] of each
+        # — 5, t, b — sits on the baseline (operator note 2026-11-07).
+        base_y = meter_num[0].get_bottom()[1]
+        for t in (meter_unit, before_tag):
+            t.shift(UP * (base_y - t[0].get_bottom()[1]))
         gap_y = (client.llm.get_bottom()[1]
                  + client.ctx_outline.get_top()[1]) / 2
         meter.move_to([client.shell.get_center()[0], gap_y, 0])

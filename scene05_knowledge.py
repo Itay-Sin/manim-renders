@@ -131,13 +131,25 @@ class Scene05Knowledge(Scene):
         final_num = Text("55,000", font=UI_FONT, font_size=18, color=INK)
         meter_row = VGroup(final_num, meter_unit, before_tag)
         meter_row.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+        # Baseline-align the three texts: bbox bottoms let the comma's and
+        # the y's descenders push the words out of line (operator note
+        # 2026-11-07). Glyph [0] of each — 5, t, b — sits on the baseline.
+        base_y = final_num[0].get_bottom()[1]
+        for t in (meter_unit, before_tag):
+            t.shift(UP * (base_y - t[0].get_bottom()[1]))
         gap_y = (client.llm.get_bottom()[1]
                  + client.ctx_outline.get_top()[1]) / 2
         meter_row.move_to([client.shell.get_center()[0], gap_y, 0])
-        meter_num = always_redraw(
-            lambda: Text(f"{int(meter_val.get_value()):,}", font=UI_FONT,
-                         font_size=18, color=INK)
-            .next_to(meter_unit, LEFT, buff=0.14, aligned_edge=DOWN))
+        unit_base = meter_unit[0].get_bottom()[1]
+
+        def num_text():
+            t = Text(f"{int(meter_val.get_value()):,}", font=UI_FONT,
+                     font_size=18, color=INK)
+            t.next_to(meter_unit, LEFT, buff=0.14)
+            t.shift(UP * (unit_base - t[0].get_bottom()[1]))
+            return t
+
+        meter_num = always_redraw(num_text)
         self.play(FadeIn(cap2), FadeIn(meter_unit, shift=DOWN * 0.1),
                   run_time=0.5)
         self.add(meter_num)

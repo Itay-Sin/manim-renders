@@ -123,6 +123,17 @@ class Scene09SemanticLayer(Scene):
         acc = make_object_card("Account", ["segment"], width=1.6).scale(0.8)
         opp.move_to(zone.shell.get_center() + RIGHT * 0.55 + UP * 0.08)
         acc.move_to(zone.shell.get_center() + RIGHT * 2.05 + UP * 0.08)
+        tag_open = Text("“open”", font=UI_FONT, font_size=12,
+                        color=AMBER)
+        tag_smb = Text("“SMB”", font=UI_FONT, font_size=12,
+                       color=AMBER)
+        tag_open.next_to(opp, DOWN, buff=0.1)
+        tag_smb.next_to(acc, DOWN, buff=0.1)
+        # Centre the object half on the model half: cards + word tags align
+        # their centre with the stack + its label instead of hanging high
+        # near the zone title (operator note 2026-11-07).
+        objs = VGroup(opp, acc, tag_open, tag_smb)
+        objs.shift(UP * (stack.get_center()[1] - objs.get_center()[1]))
         rel = Line(opp.card.get_right(), acc.card.get_left())
         rel.set_stroke(AMBER, 2.5)
         # Voice sync: "The objects" runs 7.93-8.09 heard; the 0.6 s fade
@@ -133,12 +144,7 @@ class Scene09SemanticLayer(Scene):
         self.wait(0.6)
         self.play(Create(rel), run_time=0.4)
 
-        tag_open = Text("“open”", font=UI_FONT, font_size=12,
-                        color=AMBER)
-        tag_smb = Text("“SMB”", font=UI_FONT, font_size=12,
-                       color=AMBER)
-        tag_open.next_to(opp, DOWN, buff=0.1)
-        tag_smb.next_to(acc, DOWN, buff=0.1)
+        # (The word tags were created and placed with the cards above.)
         # Voice sync: "and what your words mean" starts at 9.97 heard; the
         # 0.5 s tag fade runs 9.80-10.30 and PEAKS on "words" (10.33).
         self.wait(0.55)
