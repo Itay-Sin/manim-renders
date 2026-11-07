@@ -208,8 +208,12 @@ class Scene12Close(Scene):
         self.play(FadeOut(cap), run_time=0.2)
         cap = cap2
 
+        # Width 1.7, not 2.0: at 2.0 the surrounding ring's lower corners
+        # clipped both converging wires, which read as the box being
+        # off-centre (operator note 2026-11-07). It is centred; the corner
+        # intersections were the illusion.
         rows = VGroup(*[
-            Rectangle(width=2.0, height=0.16)
+            Rectangle(width=1.7, height=0.16)
             .set_stroke(width=0).set_fill(SLATE, 0.5)
             for _ in range(3)
         ])
@@ -257,22 +261,15 @@ class Scene12Close(Scene):
                   ring.animate.set_stroke(OK_GREEN, 2.5), run_time=0.4)
         self.wait(0.3)
 
-        # ------ final: two different tools --------------------------------
-        # The caption swaps too: holding "sometimes both" under a "two
-        # different tools" title would leave two competing closing lines.
-        closing = Text("two different tools", font=UI_FONT, font_size=24,
-                       color=INK, weight=BOLD)
-        dot_t = Dot(radius=0.06, color=TEAL)
-        dot_a = Dot(radius=0.06, color=AMBER)
-        lockup = VGroup(dot_t, closing, dot_a).arrange(RIGHT, buff=0.22)
-        lockup.move_to(UP * 0.3)  # clear air below the role labels
+        # ------ final hold -------------------------------------------------
+        # No closing lockup: the operator cut the "two different tools" text
+        # (2026-11-07) - the demo itself is the closing frame. The rows and
+        # green ring stay, so the end card reads: two tools, their roles,
+        # and the records they worked on together. The caption swap keeps
+        # its run_time as a timeline spacer; the scene length is unchanged.
         cap2 = make_caption("Two different tools. Sometimes both.")
         self.play(FadeOut(cap), run_time=0.2)
-        self.play(FadeOut(rows), FadeOut(ring), FadeIn(lockup), FadeIn(cap2),
-                  run_time=0.5)
-
-        # ------------------------------------------------- final hold ----
-        # Voice ends 18.16 s; the lockup fade (18.2-18.7 s) is the one
-        # short settle rule 2 allows, and this hold is static. 1.9 s sits
-        # inside the 2.0 s ceiling granted to the video's close.
+        self.play(FadeIn(cap2), run_time=0.5)
+        # Voice ends 18.16 s; this hold is static. 1.9 s sits inside the
+        # 2.0 s ceiling granted to the video's close.
         self.wait(1.9)

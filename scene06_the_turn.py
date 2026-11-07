@@ -45,11 +45,20 @@ class Scene06TheTurn(Scene):
         apis.endpoints.set_opacity(0.55)
         client.ctx_fill.become(ctx_fill_target(client, 0.92))
 
-        meter_num = Text("55,000", font=UI_FONT, font_size=20, color=INK)
-        meter_unit = Text("tokens", font=UI_FONT, font_size=13, color=MUTED)
+        # Matches scene 5's end state: the meter's right edge is pinned
+        # inside the shell (it overflowed when hung off the title), and the
+        # "before any work" tag carries over so nothing jumps at the cut.
+        meter_num = Text("55,000", font=UI_FONT, font_size=18, color=INK)
+        meter_unit = Text("tokens", font=UI_FONT, font_size=12, color=MUTED)
         meter = VGroup(meter_num, meter_unit).arrange(RIGHT, buff=0.1,
                                                       aligned_edge=DOWN)
         meter.next_to(client.title, RIGHT, buff=0.45)
+        meter.shift(LEFT * (meter.get_right()[0]
+                            - client.shell.get_right()[0] + 0.3))
+        before_tag = Text("before any work", font=UI_FONT, font_size=11,
+                          color=MUTED)
+        before_tag.next_to(meter_unit, DOWN, buff=0.12, aligned_edge=RIGHT)
+        meter.add(before_tag)
 
         wire_top = Line(client.shell.get_bottom(), server.shell.get_top())
         wire_bot = Line(server.shell.get_bottom(), apis.shell.get_top())

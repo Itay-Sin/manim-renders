@@ -72,7 +72,9 @@ class Scene05Knowledge(Scene):
 
         run_tag = Text("just runs the call", font=UI_FONT, font_size=16,
                        color=TEAL)
-        run_tag.next_to(server.title, RIGHT, buff=0.3)
+        # Under the title, centred: at the title's right the tag ran past
+        # the server card's edge (operator note 2026-11-07).
+        run_tag.next_to(server.title, DOWN, buff=0.18)
         self.play(FadeIn(run_tag, shift=LEFT * 0.1),
                   Indicate(client.llm, color=PURPLE, scale_factor=1.05),
                   run_time=0.8)
@@ -118,12 +120,17 @@ class Scene05Knowledge(Scene):
         # Text, not Integer: DecimalNumber renders through LaTeX, which this
         # machine does not have.
         meter_val = ValueTracker(0)
-        meter_unit = Text("tokens", font=UI_FONT, font_size=13, color=MUTED)
+        meter_unit = Text("tokens", font=UI_FONT, font_size=12, color=MUTED)
         meter_unit.next_to(client.title, RIGHT, buff=1.35,
                            aligned_edge=DOWN)
+        # Pin the unit's right edge inside the shell: positioned off the
+        # title alone, "tokens" (and the tag below it) ran past the card's
+        # right edge (operator note 2026-11-07).
+        meter_unit.shift(LEFT * (meter_unit.get_right()[0]
+                                 - client.shell.get_right()[0] + 0.3))
         meter_num = always_redraw(
             lambda: Text(f"{int(meter_val.get_value()):,}", font=UI_FONT,
-                         font_size=20, color=INK)
+                         font_size=18, color=INK)
             .next_to(meter_unit, LEFT, buff=0.1, aligned_edge=DOWN))
         self.play(FadeIn(cap2), FadeIn(meter_unit, shift=DOWN * 0.1),
                   run_time=0.5)
@@ -190,9 +197,9 @@ class Scene05Knowledge(Scene):
         )
         self.play(FadeOut(shower), Transform(client.ctx_fill, fill_b),
                   run_time=0.4)
-        before_tag = Text("before any work", font=UI_FONT, font_size=12,
+        before_tag = Text("before any work", font=UI_FONT, font_size=11,
                           color=MUTED)
-        before_tag.next_to(meter_unit, DOWN, buff=0.08, aligned_edge=RIGHT)
+        before_tag.next_to(meter_unit, DOWN, buff=0.12, aligned_edge=RIGHT)
         self.play(FadeIn(before_tag), run_time=0.3)
         # Rule-2 tail: the voice ends ~15.0 ("alone" heard 14.3). The ghost
         # servers' exit is the one short settle, starting at voice end.

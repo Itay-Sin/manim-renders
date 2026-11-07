@@ -63,7 +63,7 @@ class Scene10Resolved(Scene):
         for w in (w1, w2, w3):
             w.set_stroke(GREY, 2.2, opacity=0.75)
 
-        stack = make_sem_stack(4)
+        stack = make_sem_stack(3)
         stack.move_to(zone.shell.get_center() + LEFT * 1.7 + DOWN * 0.08)
         opp = make_object_card("Opportunity", ["status"], width=1.6).scale(0.8)
         acc = make_object_card("Account", ["segment"], width=1.6).scale(0.8)

@@ -30,7 +30,7 @@ import re
 import sys
 
 from manim import *
-from common import INK, UI_FONT
+from common import INK, MUTED, UI_FONT
 
 MAX_CHARS = 44          # one plate line before scaling kicks in
 LEAD = 0.30             # caption cuts in this long before its first word
@@ -115,6 +115,21 @@ def build_tsv(base, idx, scene_len):
         for s, e, t in rows:
             f.write(f"{s:.2f}\t{e:.2f}\t{t}\n")
     return rows
+
+
+class WatermarkPlate(Scene):
+    """The operator's name, small and quiet, in the top-right corner.
+
+    Burned at mux time like the captions, on every scene whose top-right
+    corner is free (scene 5's title strip reaches the right edge, so that
+    scene goes without). Requested 2026-11-07.
+    """
+
+    def construct(self):
+        mark = Text("Itay Sinuani", font=UI_FONT, font_size=13, color=MUTED)
+        mark.set_opacity(0.65)
+        mark.to_corner(UR, buff=0.16)
+        self.add(mark)
 
 
 class CaptionPlate(Scene):

@@ -99,7 +99,7 @@ class Scene09SemanticLayer(Scene):
         self.play(FadeIn(cap2), run_time=0.3)
         cap = cap2
 
-        stack = make_sem_stack(4)
+        stack = make_sem_stack(3)
         stack.move_to(zone.shell.get_center() + LEFT * 1.7 + DOWN * 0.08)
         # Voice sync: "a semantic model" starts at 3.96 heard. The 1.4 s
         # lagged build starts half its run ahead at 3.3 and COMPLETES at
