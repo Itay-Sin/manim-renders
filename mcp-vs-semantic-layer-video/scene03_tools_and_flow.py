@@ -1,4 +1,8 @@
-"""Scene 3: tools and the flow. ~17 s of motion plus a 1 s hold.
+"""Scene 3: tools and the flow. ~18 s of motion plus a 1 s hold.
+
+Vertical 4:5 master (1080x1350) for the LinkedIn/Facebook feed: the flow runs
+top to bottom — AI client, MCP server, your APIs — and back up. Frame coords:
+x in [-3.2, 3.2], y in [-4, 4]. A title strip and dot grid fill the frame.
 
 Narration beats:
   0-3    "The server exposes your APIs as tools."
@@ -12,7 +16,7 @@ from manim import *
 from common import (
     make_ai_client, make_mcp_server, make_api_box,
     make_tool_card, make_big_tool_card, make_packet, make_data_rows,
-    make_caption, ctx_fill_target,
+    make_caption, make_title_strip, make_dot_grid, ctx_fill_target,
     BG, INK, MUTED, LIGHT_GREY, PURPLE, PURPLE_FILL, TEAL, GREY, SLATE,
     CODE_FONT, UI_FONT,
 )
@@ -30,24 +34,29 @@ TOOL_SPECS = [
 class Scene03ToolsAndFlow(Scene):
     def construct(self):
         # ------------------------------------------------- base layout ----
-        client = make_ai_client().move_to(LEFT * 4.35)
-        server = make_mcp_server().move_to(RIGHT * 0.55)
-        apis = make_api_box().move_to(RIGHT * 5.0)
+        grid = make_dot_grid()
+        strip = make_title_strip("MCP", "Tools and the flow")
+        client = make_ai_client().move_to(UP * 1.85)
+        server = make_mcp_server().move_to(DOWN * 0.75)
+        apis = make_api_box().move_to(DOWN * 2.6)
 
-        wire_left = Line(client.shell.get_right(), server.shell.get_left())
-        wire_right = Line(server.shell.get_right(), apis.shell.get_left())
-        for w in (wire_left, wire_right):
+        wire_top = Line(client.shell.get_bottom(), server.shell.get_top())
+        wire_bot = Line(server.shell.get_bottom(), apis.shell.get_top())
+        for w in (wire_top, wire_bot):
             w.set_stroke(GREY, 2.2, opacity=0.75)
 
         cap = make_caption("The server exposes your APIs as tools.")
-        self.play(FadeIn(client), FadeIn(server), FadeIn(apis),
-                  FadeIn(wire_left), FadeIn(wire_right), FadeIn(cap),
+        self.add(grid)
+        self.play(FadeIn(strip), FadeIn(client), FadeIn(server), FadeIn(apis),
+                  FadeIn(wire_top), FadeIn(wire_bot), FadeIn(cap),
                   run_time=0.6)
 
         # ----------------------- beat 1: APIs become tools (0-3 s) --------
+        # Endpoints lift UP from the API card into the server as a card row.
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
-        cards.arrange(DOWN, buff=0.2)
-        cards.move_to(server.shell.get_center() + DOWN * 0.3)
+        cards.arrange(RIGHT, buff=0.18)
+        cards.scale_to_fit_width(5.3)
+        cards.move_to(server.shell.get_center() + DOWN * 0.22)
 
         lift_anims = []
         ghosts = VGroup()
@@ -61,9 +70,9 @@ class Scene03ToolsAndFlow(Scene):
         self.play(LaggedStart(*lift_anims, lag_ratio=0.3), run_time=2.4)
 
         # -------------- beat 2: anatomy of one tool card (3-8 s) ----------
-        dim = Rectangle(width=16, height=9)
+        dim = Rectangle(width=8, height=10)
         dim.set_stroke(width=0).set_fill(BG, opacity=0.65)
-        big = make_big_tool_card(*TOOL_SPECS[0]).move_to(UP * 0.15)
+        big = make_big_tool_card(*TOOL_SPECS[0]).move_to(UP * 0.35)
 
         cap2 = make_caption("Each tool has a name, a description, and an input schema.")
         # Captions swap sequentially: cross-fading in place leaves two texts
@@ -88,17 +97,15 @@ class Scene03ToolsAndFlow(Scene):
         )
         self.remove(big)
 
-        # ----------- beat 3: cards go to the LLM (8-11 s) -----------------
-        minis = cards  # same objects, scaled down into the LLM box
-        targets = []
-        anchor = client.llm.get_center() + DOWN * 0.25
-        for i in range(3):
-            targets.append(anchor + UP * (0.55 - 0.55 * i))
+        # ----------- beat 3: cards go UP to the LLM (8-11 s) --------------
+        minis = cards  # same objects, shrunk into a row inside the LLM box
+        anchor = client.llm.get_center() + DOWN * 0.15
+        targets = [anchor + RIGHT * dx for dx in (-1.13, 0.0, 1.13)]
         cap2 = make_caption("The client hands those to the LLM...")
         self.play(FadeOut(cap), run_time=0.25)
         self.play(
             LaggedStart(*[
-                card.animate.scale(0.42).move_to(pos)
+                card.animate.scale(0.61).move_to(pos)
                 for card, pos in zip(minis, targets)
             ], lag_ratio=0.2),
             FadeIn(cap2),
@@ -123,15 +130,16 @@ class Scene03ToolsAndFlow(Scene):
                   run_time=0.6)
         cap = cap2
 
-        sweep = Rectangle(width=minis[0].width + 0.25, height=0.55)
+        # The highlight sweeps ACROSS the row of minis.
+        sweep = Rectangle(width=minis[0].width + 0.2,
+                          height=minis[0].height + 0.25)
         sweep.set_stroke(width=0).set_fill(PURPLE, 0.25)
         sweep.move_to(minis[0])
         self.play(FadeIn(sweep, run_time=0.15))
         self.play(sweep.animate.move_to(minis[2]), run_time=0.6)
         self.play(sweep.animate.move_to(minis[0]), run_time=0.4)
 
-        # A scale pop, not an upward shift: shifting the top card up rams it
-        # into the "LLM" label.
+        # A scale pop, not a shift: shifting would ram neighbours or labels.
         self.play(FadeOut(sweep, run_time=0.2),
                   minis[0].animate.scale(1.08),
                   run_time=0.3)
@@ -139,16 +147,16 @@ class Scene03ToolsAndFlow(Scene):
         ring.set_stroke(PURPLE_FILL, 2.5)
         self.play(Create(ring), run_time=0.3)
 
-        # The filled input types below the LLM box, inside the client shell;
-        # next to the card it would spill out over the wire.
+        # The filled input types below the LLM box, inside the client shell,
+        # in the gap above the context-window bar.
         filled = Text("status = open", font=CODE_FONT, font_size=15,
                       color=INK)
-        filled.next_to(client.llm, DOWN, buff=0.18)
+        filled.next_to(client.llm, DOWN, buff=0.1)
         self.play(AddTextLetterByLetter(filled), run_time=1.0)
 
         # ------------- beat 5: the server runs it (14-17 s) ---------------
         # The call leaves the chosen card as a packet; the card stays put.
-        pkt = make_packet().move_to(minis[0].get_right() + RIGHT * 0.18)
+        pkt = make_packet().move_to(minis[0].get_bottom() + DOWN * 0.12)
         cap2 = make_caption("and then the server runs it.")
         self.play(FadeOut(cap), run_time=0.15)
         self.play(FadeIn(pkt, scale=0.3), FadeOut(ring), FadeOut(filled),
@@ -156,27 +164,27 @@ class Scene03ToolsAndFlow(Scene):
                   FadeIn(cap2), run_time=0.3)
         cap = cap2
 
-        # One continuous journey to the server, dropping onto the wire.
+        # One continuous journey DOWN to the server, dropping onto the wire.
         p1 = VMobject().set_points_smoothly([
             pkt.get_center(),
-            [client.shell.get_right()[0] + 0.15, wire_left.get_y(), 0],
-            server.shell.get_center(),
+            [wire_top.get_x(), client.shell.get_bottom()[1] - 0.08, 0],
+            server.shell.get_center() + UP * 0.1,
         ])
         self.play(MoveAlongPath(pkt, p1), run_time=0.9)
 
         # The server visibly runs it: flash, spark, a small label.
         run_tag = Text("runs the call", font=UI_FONT, font_size=18, color=TEAL)
-        run_tag.next_to(server.title, DOWN, buff=0.18)
+        run_tag.next_to(server.title, RIGHT, buff=0.3)
         self.play(server.shell.animate.set_stroke(TEAL, 6),
                   FadeIn(run_tag, shift=DOWN * 0.1), run_time=0.25)
         self.play(server.shell.animate.set_stroke(TEAL, 2.5),
                   Flash(pkt, color=TEAL, line_length=0.18, num_lines=10),
                   run_time=0.35)
 
-        # Onward to the exact endpoint it maps to, which lights up.
+        # Onward DOWN to the exact endpoint it maps to, which lights up.
         p2 = VMobject().set_points_smoothly([
             pkt.get_center(),
-            [apis.shell.get_left()[0] - 0.15, wire_right.get_y(), 0],
+            [wire_bot.get_x(), apis.shell.get_top()[1] + 0.08, 0],
             ghosts[0].get_center(),
         ])
         self.play(MoveAlongPath(pkt, p2), run_time=0.7)
@@ -186,21 +194,21 @@ class Scene03ToolsAndFlow(Scene):
         self.play(ghosts[0].animate.set_opacity(0.55).set_color(SLATE),
                   FadeOut(run_tag), run_time=0.3)
 
-        # Data rows travel back from that endpoint into the client.
-        # DOWN * 2.1 keeps a clear gap under the "context window" label;
-        # at 1.9 the top bar reads as an underline on it.
-        rows = make_data_rows(3)
-        rows.move_to(client.shell.get_center() + DOWN * 2.1)
-        moving = rows.copy()
+        # Data rows travel back UP from that endpoint and are absorbed by the
+        # context window: tool results consume context (sets up scene 5).
+        moving = make_data_rows(3)
         for bar in moving:
             bar.move_to(ghosts[0].get_center()).scale(0.5)
         self.play(
             LaggedStart(*[
-                m.animate.scale(2.0).move_to(b.get_center())
-                for m, b in zip(moving, rows)
-            ], lag_ratio=0.15),
-            run_time=1.1,
+                m.animate.move_to(client.ctx_outline.get_center())
+                for m in moving
+            ], lag_ratio=0.18),
+            run_time=1.0,
         )
+        fill2 = ctx_fill_target(client, 0.45)
+        self.play(FadeOut(moving), Transform(client.ctx_fill, fill2),
+                  run_time=0.45)
 
         # ------------------------------------------------- final hold ----
         self.wait(1.0)

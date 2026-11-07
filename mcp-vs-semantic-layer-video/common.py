@@ -29,6 +29,11 @@ SLATE = "#4B5563"         # endpoint labels, readable on white at mobile size
 
 config.background_color = BG
 
+# 4:5 vertical master (1080x1350): LinkedIn's recommended vertical feed ratio,
+# also Facebook's feed spec. Frame coords: x in [-3.2, 3.2], y in [-4, 4].
+config.frame_height = 8.0
+config.frame_width = 6.4
+
 
 # ----------------------------------------------------------------- actors ----
 def make_shadow(box):
@@ -52,24 +57,27 @@ def _shell(width, height, color, label, label_size=26, title_color=None):
 
 
 def make_ai_client():
-    """AI client shell with .llm (purple box), .ctx_outline and .ctx_fill."""
-    shadow, shell, title = _shell(4.6, 5.0, "#D8DCE3", "AI client",
+    """AI client shell with .llm (purple box), .ctx_outline and .ctx_fill.
+
+    Sized for the stacked 4:5 layout: wide and short, LLM row on top,
+    context window bar beneath it."""
+    shadow, shell, title = _shell(5.8, 3.1, "#D8DCE3", "AI client",
                                   title_color=INK)
 
-    llm = RoundedRectangle(corner_radius=0.14, width=2.9, height=2.1)
+    llm = RoundedRectangle(corner_radius=0.14, width=3.6, height=1.35)
     llm.set_stroke(PURPLE, 3).set_fill(PURPLE, opacity=0.07)
-    llm.move_to(shell.get_center() + UP * 0.75)
-    llm_label = Text("LLM", font=UI_FONT, font_size=24, color=PURPLE)
-    llm_label.next_to(llm.get_top(), DOWN, buff=0.12)
+    llm.move_to(shell.get_center() + UP * 0.3)
+    llm_label = Text("LLM", font=UI_FONT, font_size=18, color=PURPLE)
+    llm_label.next_to(llm.get_top(), DOWN, buff=0.08)
 
-    ctx_outline = Rectangle(width=3.6, height=0.42)
+    ctx_outline = Rectangle(width=4.6, height=0.42)
     ctx_outline.set_stroke(PURPLE, 2)
-    ctx_outline.move_to(shell.get_center() + DOWN * 1.15)
+    ctx_outline.move_to(shell.get_center() + DOWN * 0.95)
     ctx_fill = Rectangle(width=0.001, height=0.32)
     ctx_fill.set_stroke(width=0).set_fill(PURPLE_FILL, 0.9)
     ctx_fill.move_to(ctx_outline.get_left() + RIGHT * 0.05)
-    ctx_label = Text("context window", font=UI_FONT, font_size=16, color=MUTED)
-    ctx_label.next_to(ctx_outline, DOWN, buff=0.1)
+    ctx_label = Text("context window", font=UI_FONT, font_size=15, color=MUTED)
+    ctx_label.next_to(ctx_outline, DOWN, buff=0.08)
 
     g = VGroup(shadow, shell, title, llm, llm_label,
                ctx_outline, ctx_fill, ctx_label)
@@ -89,7 +97,7 @@ def ctx_fill_target(client, frac):
 
 
 def make_mcp_server():
-    shadow, shell, title = _shell(3.3, 5.0, TEAL, "MCP server")
+    shadow, shell, title = _shell(5.8, 1.9, TEAL, "MCP server")
     g = VGroup(shadow, shell, title)
     g.shell, g.title = shell, title
     return g
@@ -97,14 +105,14 @@ def make_mcp_server():
 
 def make_api_box():
     """'your APIs' card with .endpoints (VGroup of three labels)."""
-    shadow, shell, title = _shell(3.2, 2.8, "#D8DCE3", "your APIs",
-                                  title_color=INK)
+    shadow, shell, title = _shell(5.8, 1.45, "#D8DCE3", "your APIs",
+                                  title_color=INK, label_size=22)
     endpoints = VGroup(*[
-        Text(t, font=CODE_FONT, font_size=16, color=SLATE)
+        Text(t, font=CODE_FONT, font_size=15, color=SLATE)
         for t in ["GET /opportunities", "GET /accounts", "POST /deals"]
     ])
-    endpoints.arrange(DOWN, buff=0.3, aligned_edge=LEFT)
-    endpoints.move_to(shell.get_center() + DOWN * 0.25)
+    endpoints.arrange(DOWN, buff=0.13, aligned_edge=LEFT)
+    endpoints.move_to(shell.get_center() + DOWN * 0.17)
     g = VGroup(shadow, shell, title, endpoints)
     g.shell, g.title, g.endpoints = shell, title, endpoints
     return g
@@ -116,7 +124,7 @@ def make_tool_card(name, desc, schema, width=2.7, height=0.95):
     card.set_stroke(TEAL, 1.8).set_fill("#EFF9F7", opacity=1.0)
     rows = VGroup(
         Text(name, font=CODE_FONT, font_size=15, color=INK),
-        Text(desc, font_size=11, color=MUTED),
+        Text(desc, font=UI_FONT, font_size=11, color=MUTED),
         Text(schema, font=CODE_FONT, font_size=11, color=TEAL),
     )
     for t in rows:
@@ -129,7 +137,7 @@ def make_tool_card(name, desc, schema, width=2.7, height=0.95):
     return g
 
 
-def make_big_tool_card(name, desc, schema, width=6.4, height=3.0):
+def make_big_tool_card(name, desc, schema, width=5.4, height=2.9):
     """Enlarged card with labelled rows, .rows exposes the three row groups."""
     card = RoundedRectangle(corner_radius=0.14, width=width, height=height)
     card.set_stroke(TEAL, 2.5).set_fill("#FFFFFF", opacity=1.0)
@@ -146,7 +154,7 @@ def make_big_tool_card(name, desc, schema, width=6.4, height=3.0):
 
     rows = VGroup(
         row("name", name, CODE_FONT, 26, INK),
-        row("description", desc, None, 20, LIGHT_GREY),
+        row("description", desc, UI_FONT, 20, LIGHT_GREY),
         row("input schema", schema, CODE_FONT, 22, TEAL),
     )
     rows.arrange(DOWN, buff=0.24, aligned_edge=LEFT)
@@ -175,9 +183,39 @@ def make_data_rows(n=3, width=1.4):
 
 def make_caption(text):
     """Burned-in caption for sound-off viewing (LinkedIn), bottom centre."""
-    t = Text(text, font=UI_FONT, font_size=30, color=INK)
-    t.to_edge(DOWN, buff=0.32)
+    t = Text(text, font=UI_FONT, font_size=26, color=INK)
+    if t.width > 6.0:
+        t.scale_to_fit_width(6.0)
+    t.to_edge(DOWN, buff=0.14)
     return t
+
+
+def make_title_strip(kicker, title):
+    """Top header band for the vertical frame: accent kicker pill + title."""
+    pill_text = Text(kicker, font=UI_FONT, font_size=15, color="#FFFFFF",
+                     weight=BOLD)
+    pill = RoundedRectangle(corner_radius=0.16,
+                            width=pill_text.width + 0.42, height=0.36)
+    pill.set_stroke(width=0).set_fill(TEAL, 1.0)
+    pill_text.move_to(pill.get_center())
+    head = Text(title, font=UI_FONT, font_size=24, color=INK, weight=BOLD)
+    g = VGroup(VGroup(pill, pill_text), head).arrange(RIGHT, buff=0.22)
+    g.to_edge(UP, buff=0.22)
+    return g
+
+
+def make_dot_grid():
+    """Faint dot grid filling the page behind the cards, so no zone is dead."""
+    dots = VGroup()
+    x = -3.0
+    while x <= 3.01:
+        y = -3.9
+        while y <= 3.91:
+            dots.add(Dot([x, y, 0], radius=0.016, color="#C9CFD9")
+                     .set_opacity(0.55))
+            y += 0.55
+        x += 0.55
+    return dots
 
 
 def make_token_meter():
