@@ -71,18 +71,18 @@ def make_ai_client():
 
     Sized for the stacked 4:5 layout: wide and short, LLM row on top,
     context window bar beneath it."""
-    shadow, shell, title = _shell(5.6, 2.85, "#D8DCE3", "AI client",
+    shadow, shell, title = _shell(5.6, 3.0, "#D8DCE3", "AI client",
                                   title_color=INK)
 
     llm = RoundedRectangle(corner_radius=0.14, width=3.5, height=1.3)
     llm.set_stroke(PURPLE, 3).set_fill(PURPLE, opacity=0.07)
-    llm.move_to(shell.get_center() + UP * 0.28)
+    llm.move_to(shell.get_center() + UP * 0.18)
     llm_label = Text("LLM", font=UI_FONT, font_size=18, color=PURPLE)
     llm_label.next_to(llm.get_top(), DOWN, buff=0.08)
 
     ctx_outline = Rectangle(width=4.6, height=0.42)
     ctx_outline.set_stroke(PURPLE, 2)
-    ctx_outline.move_to(shell.get_center() + DOWN * 0.88)
+    ctx_outline.move_to(shell.get_center() + DOWN * 1.0)
     ctx_fill = Rectangle(width=0.001, height=0.32)
     ctx_fill.set_stroke(width=0).set_fill(PURPLE_FILL, 0.9)
     ctx_fill.move_to(ctx_outline.get_left() + RIGHT * 0.05)

@@ -51,10 +51,12 @@ class Scene02WhatIsMCP(Scene):
         cap = make_caption("MCP is like a USB-C port for AI.")
         self.play(FadeIn(strip), FadeIn(server), FadeIn(cap), run_time=0.8)
 
-        # On "USB-C port", the socket pulses once.
-        self.play(Indicate(port, color=TEAL, scale_factor=1.35), run_time=0.9)
+        # On "USB-C port", the socket pulses once. The words land ~3.9-4.5 s
+        # into the scene (srt + 0.5), so the pulse waits for them.
+        self.wait(2.6)
+        self.play(Indicate(port, color=TEAL, scale_factor=1.35), run_time=0.8)
         # Holds are sized so the scene runs just past its 12.6 s narration.
-        self.wait(1.4)
+        self.wait(0.6)
 
         # Three AI clients appear in a row above.
         clients = VGroup(small_client("Claude"),
@@ -67,7 +69,7 @@ class Scene02WhatIsMCP(Scene):
         self.play(FadeOut(cap), run_time=0.2)
         self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in clients],
                               lag_ratio=0.25),
-                  FadeIn(cap2), run_time=1.1)
+                  FadeIn(cap2), run_time=1.2)
         cap = cap2
 
         # Each client extends a cable into the same port, with a click flash.
@@ -80,18 +82,18 @@ class Scene02WhatIsMCP(Scene):
             cable = CubicBezier(start, ctrl1, ctrl2, plug_point)
             cable.set_stroke(GREY, 2.6, opacity=0.85)
             cables.add(cable)
-            self.play(Create(cable), run_time=0.75)
+            self.play(Create(cable), run_time=0.8)
             self.play(Flash(port, color=TEAL, line_length=0.14, num_lines=8),
-                      run_time=0.3)
+                      run_time=0.2)
 
-        self.wait(1.5)
+        self.wait(1.6)
 
         # Two clients leave; one stays: the base layout for the next scenes.
         keeper = clients[2]
         self.play(
             FadeOut(clients[0]), FadeOut(clients[1]),
             FadeOut(cables[0]), FadeOut(cables[1]),
-            run_time=0.7,
+            run_time=0.8,
         )
         # The curved cable straightens into the vertical wire of the base
         # layout as the remaining client takes centre stage.
@@ -101,4 +103,4 @@ class Scene02WhatIsMCP(Scene):
                   ReplacementTransform(cables[2], wire), run_time=0.8)
 
         # ------------------------------------------------- final hold ----
-        self.wait(2.2)
+        self.wait(1.6)

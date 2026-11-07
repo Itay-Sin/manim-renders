@@ -42,7 +42,15 @@ class Scene04EasyQuestion(Scene):
         cards = VGroup(*[make_tool_card(*s) for s in TOOL_SPECS])
         cards.arrange(RIGHT, buff=0.18)
         cards.scale_to_fit_width(5.1)
-        cards.move_to(server.shell.get_center() + DOWN * 0.18)
+        # Scene 3 left the tools WITH THE LLM: the shrunken row sits inside
+        # it, the server card is empty, the endpoints are ghosts, and the
+        # context window already holds the first results. Starting them back
+        # in the server would make the cut from scene 3 read as broken.
+        for card, dx in zip(cards, (-1.08, 0.0, 1.08)):
+            card.scale(0.6).move_to(
+                client.llm.get_center() + DOWN * 0.1 + RIGHT * dx)
+        apis.endpoints.set_opacity(0.55)
+        client.ctx_fill.become(ctx_fill_target(client, 0.45))
 
         wire_top = Line(client.shell.get_bottom(), server.shell.get_top())
         wire_bot = Line(server.shell.get_bottom(), apis.shell.get_top())
@@ -59,10 +67,10 @@ class Scene04EasyQuestion(Scene):
         # card's top edge; only the tail tip touches it, pointing at the
         # client the question is being asked of.
         bubble = make_bubble("show me my open opportunities", width=4.6)
-        bubble.scale(0.9).move_to(UP * 3.62)
+        bubble.scale(0.9).move_to(UP * 3.38)  # clear air above, like the strip
         cap = make_caption("An easy question: show me my open opportunities.")
         self.play(FadeIn(bubble, shift=DOWN * 0.2), FadeIn(cap), run_time=0.8)
-        self.wait(0.6)
+        self.wait(1.6)
 
         # ----- beat 2: "open" is a declared value of the tool (4-8 s) -----
         dim = Rectangle(width=8, height=10)
@@ -94,10 +102,10 @@ class Scene04EasyQuestion(Scene):
 
         cap2 = make_caption("The tool lists open as a status value.")
         self.play(FadeOut(cap), run_time=0.2)
-        self.play(FadeIn(dim), run_time=0.3)
+        self.play(FadeIn(dim), run_time=0.4)
         self.add(bubble)  # the question stays readable above the dim
         self.play(FadeIn(schema_view, shift=UP * 0.15), FadeIn(cap2),
-                  run_time=0.7)
+                  run_time=0.6)
         cap = cap2
 
         # The word in the question connects to the declared value.
@@ -114,42 +122,43 @@ class Scene04EasyQuestion(Scene):
         check.next_to(v_open_box, DOWN, buff=0.12)
         check.set_z_index(12)
         self.play(Indicate(bubble.text, color=OK_GREEN, scale_factor=1.03),
-                  run_time=0.5)
-        self.play(Create(link), run_time=0.5)
+                  run_time=0.6)
+        self.play(Create(link), run_time=0.4)
         self.play(FadeIn(check, scale=0.5),
                   Indicate(v_open_box, color=OK_GREEN, scale_factor=1.1),
                   run_time=0.6)
-        self.wait(0.4)
+        self.wait(0.2)
 
         # --------- beat 3: so the LLM just asks for it (8-10 s) -----------
         cap2 = make_caption("So the LLM just asks for it.")
         self.play(FadeOut(cap), run_time=0.2)
         self.play(FadeOut(dim), FadeOut(schema_view), FadeOut(link),
-                  FadeOut(check), FadeIn(cap2), run_time=0.5)
+                  FadeOut(check), FadeIn(cap2), run_time=0.4)
         cap = cap2
 
-        # Spawns on the wire below the client (UP * 0.15 would sit on the
-        # "context window" label) and pauses above the tool card it calls:
-        # the server's centre is occupied by the fetch_accounts card here.
-        pkt = make_packet().move_to(client.shell.get_bottom() + DOWN * 0.05)
-        self.play(FadeIn(pkt, scale=0.4), run_time=0.25)
+        # The call leaves the chosen tool in the LLM and rides down to the
+        # (now empty) server, as in scene 3.
+        pkt = make_packet().move_to(cards[0].get_bottom() + DOWN * 0.12)
+        self.play(FadeIn(pkt, scale=0.4), run_time=0.2)
         p1 = VMobject().set_points_smoothly([
             pkt.get_center(),
-            [0, server.shell.get_top()[1] + 0.3, 0],
-            [cards[0].get_x(), cards[0].get_top()[1] + 0.16, 0],
+            [0, client.shell.get_bottom()[1] - 0.08, 0],
+            server.shell.get_center() + UP * 0.05,
         ])
         self.play(MoveAlongPath(pkt, p1), run_time=0.6)
-        self.play(server.shell.animate.set_stroke(TEAL, 6), run_time=0.15)
+        self.play(server.shell.animate.set_stroke(TEAL, 6), run_time=0.2)
         self.play(server.shell.animate.set_stroke(TEAL, 2.5), run_time=0.2)
         p2 = VMobject().set_points_smoothly([
             pkt.get_center(),
             [apis.endpoints[0].get_x(), apis.shell.get_top()[1] + 0.08, 0],
             apis.endpoints[0].get_center(),
         ])
-        self.play(MoveAlongPath(pkt, p2), run_time=0.5)
+        self.play(MoveAlongPath(pkt, p2), run_time=0.4)
         self.play(FadeOut(pkt, scale=0.4),
-                  apis.endpoints[0].animate.set_color(TEAL), run_time=0.25)
-        self.play(apis.endpoints[0].animate.set_color(SLATE), run_time=0.25)
+                  apis.endpoints[0].animate.set_opacity(1.0).set_color(TEAL),
+                  run_time=0.2)
+        self.play(apis.endpoints[0].animate.set_opacity(0.55).set_color(SLATE),
+                  run_time=0.2)
 
         moving = make_data_rows(3)
         for bar in moving:
@@ -159,9 +168,9 @@ class Scene04EasyQuestion(Scene):
                 m.animate.move_to(client.ctx_outline.get_center())
                 for m in moving
             ], lag_ratio=0.18),
-            run_time=0.9,
+            run_time=0.6,
         )
-        fill2 = ctx_fill_target(client, 0.4)
+        fill2 = ctx_fill_target(client, 0.55)
         self.play(FadeOut(moving), Transform(client.ctx_fill, fill2),
                   run_time=0.4)
 
@@ -178,7 +187,7 @@ class Scene04EasyQuestion(Scene):
         self.add(cards[0])  # re-adding lifts the spotlighted card above the shade
         self.play(FadeIn(cap2), Create(ring),
                   shade.animate.set_fill(BG, opacity=0.35),
-                  run_time=0.7)
+                  run_time=0.6)
         cap = cap2
         self.wait(0.4)
         self.play(FadeOut(shade), FadeOut(ring), run_time=0.4)

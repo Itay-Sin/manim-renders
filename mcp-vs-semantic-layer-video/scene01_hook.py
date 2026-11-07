@@ -52,18 +52,17 @@ class Scene01Hook(Scene):
             run_time=0.8,
         )
 
-        # The one example question, typed into a bubble mid-frame.
+        # The one example question lands late, once both ideas are parted,
+        # and stays where it appears (no park: it would crowd the top edge).
         bubble = make_bubble("show me my open SMB opportunities", width=4.9)
         bubble.move_to(DOWN * 1.3)
         cap2 = make_caption("Let's walk through both, with one example question.")
+        self.wait(1.2)
         self.play(FadeOut(cap), run_time=0.2)
         self.play(FadeIn(bubble, shift=UP * 0.2), FadeIn(cap2), run_time=0.7)
         cap = cap2
         self.play(Indicate(bubble.text, color=PURPLE, scale_factor=1.04),
                   run_time=0.8)
 
-        # It parks small at the top as the thread of the whole video.
-        self.play(bubble.animate.scale(0.62).move_to(UP * 3.55), run_time=0.9)
-
         # ------------------------------------------------- final hold ----
-        self.wait(1.0)
+        self.wait(1.7)
