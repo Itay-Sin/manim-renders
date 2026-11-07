@@ -198,13 +198,22 @@ def make_data_rows(n=3, width=1.4):
 
 
 def make_caption(text):
-    """Burned-in caption on its own footer plate, so subtitles have a home."""
+    """Caption placeholder: same geometry, rendered fully transparent.
+
+    Captions are no longer drawn by the scenes. They are burned in at mux
+    time from the narration's own word timings, so a caption can never
+    drift against the voice and never drags a visual with it. The scenes
+    still create and fade these placeholders so every play keeps its exact
+    run_time; only the pixels are gone. The plate style lives on in
+    caption_track.py, which must match this geometry.
+    """
     t = Text(text, font=UI_FONT, font_size=25, color=INK)
     if t.width > 5.5:
         t.scale_to_fit_width(5.5)
     plate = RoundedRectangle(corner_radius=0.19,
                              width=t.width + 0.5, height=0.6)
-    plate.set_stroke(width=0).set_fill("#FFFFFF", opacity=0.9)
+    plate.set_stroke(width=0).set_fill("#FFFFFF", opacity=0.0)
+    t.set_fill(opacity=0.0).set_stroke(width=0, opacity=0.0)
     t.move_to(plate.get_center())
     g = VGroup(plate, t)
     g.to_edge(DOWN, buff=0.18)
