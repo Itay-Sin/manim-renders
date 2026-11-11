@@ -56,10 +56,21 @@ for n in 1 2 3 4 5 6 7 8 9 10 11 12; do
   # audio near every scene boundary). The talk track must live strictly
   # inside its own scene.
   filter+="[${aidx}:a]adelay=500|500,apad[aout]"
+  # 48 kHz stereo, not the voice's native 24 kHz mono: the posted file's
+  # unusual audio was one of two defects behind LinkedIn's dead mobile-web
+  # player (operator field report 2026-11-11).
   $FF -y "${inputs[@]}" -filter_complex "$filter" \
     -map "$prev" -map "[aout]" -shortest \
     -c:v libx264 -crf 18 -preset medium -pix_fmt yuv420p \
-    -c:a aac -b:a 160k "seg_s${n}.mp4" -loglevel error
+    -c:a aac -b:a 160k -ar 48000 -ac 2 "seg_s${n}.mp4" -loglevel error
   echo "seg_s${n}.mp4 done ($k captions)"
 done
+
+# The stitch lives in this script so no ad-hoc concat can drop the web
+# flags. +faststart moves the moov atom ahead of mdat; without it a mobile
+# browser must download the whole file before it can start playing - the
+# other defect the posted file had (operator field report 2026-11-11).
+$FF -y -f concat -safe 0 -i concat_full.txt -c copy -movflags +faststart \
+  full_v2.mp4 -loglevel error
+echo "full_v2.mp4 stitched (faststart, 48 kHz stereo)"
 echo MUX_OVERLAY_ALL_DONE
